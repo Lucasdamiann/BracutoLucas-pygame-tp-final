@@ -4,7 +4,7 @@ from auxiliar import Auxiliar
 from platforms import Platform
 
 class Character:
-    def __init__(self,move_x=0,move_y=0,position_x=0,position_y=0,direction=0,speed_walk=0,speed_run=0,power_jump=0,amount_gravity=0,frame_rate_ms=0,move_rate_ms=0,p_scale=1,walk_ms=100,run_ms=500,stay_ms=550,jump_ms=552,attack_ms=680,walk_on=True,run_on=True,stay_on=True,jump_on=True,attack_on=True) -> None:
+    def __init__(self,move_x=0,move_y=0,position_x=0,position_y=0,direction=0,speed_walk=0,speed_run=0,power_jump=0,amount_gravity=0,frame_rate_ms=0,move_rate_ms=0,p_scale=1,walk_ms=100,run_ms=500,stay_ms=550,jump_ms=552,attack_ms=680,walk_on=True,run_on=True,stay_on=True,jump_on=True,attack_on=True,die_on=True) -> None:
         self.walk_r_action = Auxiliar.getSurfaceFromSeparateFiles(RESOURCES_FOLDER+ENEMY_FOLDER+"WALK\_WALK_00{0}.png",0,7,flip=False,scale=p_scale)
         self.walk_l_action = Auxiliar.getSurfaceFromSeparateFiles(RESOURCES_FOLDER+ENEMY_FOLDER+"WALK\_WALK_00{0}.png",0,7,flip=True,scale=p_scale)
         self.jump_r_action = Auxiliar.getSurfaceFromSeparateFiles(RESOURCES_FOLDER+ENEMY_FOLDER+"JUMP\_JUMP_00{0}.png",0,7,flip=False,scale=p_scale)
@@ -17,7 +17,7 @@ class Character:
         self.die_l_action = Auxiliar.getSurfaceFromSeparateFiles(RESOURCES_FOLDER+ENEMY_FOLDER+"DIE\_DIE_00{0}.png",0,7,flip=True,scale=p_scale)
         self.run_r_action = Auxiliar.getSurfaceFromSeparateFiles(RESOURCES_FOLDER+ENEMY_FOLDER+"RUN\_RUN_00{0}.png",0,7,flip=False,scale=p_scale)
         self.run_l_action = Auxiliar.getSurfaceFromSeparateFiles(RESOURCES_FOLDER+ENEMY_FOLDER+"RUN\_RUN_00{0}.png",0,7,flip=True,scale=p_scale)
-        self.animation = self.idle_r_action
+        self.animation = self.idle_l_action
         self.frame = 0
         self.image = self.animation[self.frame]
         self.rect = self.image.get_rect()
@@ -34,7 +34,7 @@ class Character:
         self.move_rate_ms = move_rate_ms
         self.tiempo_transcurrido_move = 0
         self.frame_rate_ms = frame_rate_ms
-        self.tiempo_transcurrido_animation = 0
+        self.elapsed_time_animation = 0
         self.y_start_jump = 0
         self.time_acumulator = 0
         self.walk_on = walk_on
@@ -47,10 +47,15 @@ class Character:
         self.jump_ms = jump_ms
         self.attack_on = attack_on
         self.attack_ms = attack_ms
+        self.die_on = die_on
+        self.hit_counter = 0
         self.rect_ground_collision_r = pygame.Rect(self.rect.x+self.rect.w/4.5,self.rect.y+self.rect.h-10,self.rect.w/4,10)
         self.rect_ground_collision_l = pygame.Rect(self.rect.x+self.rect.w/1.8,self.rect.y+self.rect.h-10,self.rect.w/4,10)
-        self.rect_hit_collision_l = pygame.Rect(self.rect.x+self.rect.w/2.1,self.rect.y+5,self.rect.w/2.3,self.rect.h-15)
-        self.rect_hit_collision_r = pygame.Rect(self.rect.x+self.rect.w/10,self.rect.y+5,self.rect.w/2.3,self.rect.h-15)
+        self.rect_hit_collision = pygame.Rect(self.rect.x+self.rect.w/2.7,self.rect.y+5,self.rect.w/4,self.rect.h-15)
+        self.rect_vision = pygame.Rect(self.rect.x,self.rect.y+self.rect.h/3,self.rect.w/2,self.rect.h/4)
+        self.is_dead = False
+        self.die_sound = pygame.mixer.Sound("Juego_freeknight\mis_assets\Sounds\mAssassinDie.wav")
+        self.life = 2
         
     def walk(self,direction):
         '''comentar los metodos'''
@@ -107,42 +112,60 @@ class Character:
             self.animation = self.run_l_action            
             self.move_x = -self.speed_run
 
-    def automove(self):
+    def die(self):
+        if self.direction == DIRECTION_R:
+            self.animation == self.die_r_action
+            self.move_x = 0
+        else:
+            self.animation == self.die_l_action
+            self.move_x = 0
+
+    def automove(self,player):
         '''Gestiona las acciones del personaje'''
-        print("Acumulador: {}".format(self.time_acumulator))
-        self.time_acumulator +=1  
-        if self.direction == DIRECTION_L and self.time_acumulator <= self.walk_ms and self.walk_on:
-            self.walk(DIRECTION_L)
-            self.time_acumulator +=1
-        elif self.direction == DIRECTION_R and self.time_acumulator <= self.walk_ms and self.walk_on:
-            self.walk(DIRECTION_R)
-            self.time_acumulator +=1
-        elif self.walk_ms < self.time_acumulator <= self.run_ms and self.run_on:
-            self.run()      
+        if self.is_dead == False and self.hit_counter < self.life:
             self.time_acumulator +=1  
-        elif self.run_ms < self.time_acumulator <= self.stay_ms and self.stay_on:
-            self.stay()
-            self.time_acumulator +=1
-        elif self.stay_ms < self.time_acumulator <= self.jump_ms and self.jump_on:
-            self.jump(True)
-            self.time_acumulator +=1
-        elif self.jump_ms < self.time_acumulator <= self.attack_ms and self.attack_on:
-            self.attack()   
-            self.time_acumulator +=1  
-        elif self.time_acumulator > self.attack_ms:
-            self.time_acumulator = 0
-            if self.direction == DIRECTION_L:             
-                self.direction = DIRECTION_R
+            if self.direction == DIRECTION_L and self.time_acumulator <= self.walk_ms and self.walk_on:
+                self.walk(DIRECTION_L)
+                self.time_acumulator +=1
+            elif self.direction == DIRECTION_R and self.time_acumulator <= self.walk_ms and self.walk_on:
+                self.walk(DIRECTION_R)
+                self.time_acumulator +=1
+            elif self.walk_ms < self.time_acumulator <= self.run_ms and self.run_on:
+                self.run()      
+                self.time_acumulator +=1  
+            elif self.run_ms < self.time_acumulator <= self.stay_ms and self.stay_on:
+                self.stay()
+                self.time_acumulator +=1
+            elif self.stay_ms < self.time_acumulator <= self.jump_ms and self.jump_on:
+                self.jump(True)
+                self.time_acumulator +=1
+            elif self.jump_ms < self.time_acumulator <= self.attack_ms and self.attack_on:
+                self.attack()   
+                self.time_acumulator +=1  
+            elif self.time_acumulator > self.attack_ms:
+                self.time_acumulator = 0
+                if self.direction == DIRECTION_L:             
+                    self.direction = DIRECTION_R
+                else:
+                    self.direction = DIRECTION_L
+            if self.in_visual(player):
+                self.attack()
             else:
-                self.direction = DIRECTION_L
-            
-            
+                self.stay()
+                
+        elif self.hit_counter >= 2:          
+            print(self.hit_counter) 
+            self.animation = self.die_l_action   
+            self.die()
+            self.die_sound.play()
+            self.is_dead = True
+            self.hit_counter = 0
     
-    def do_movement(self, delta_ms,platform_list):
+    
+    def do_movement(self, delta_ms,platform_list,player):
         self.tiempo_transcurrido_move += delta_ms
         if self.tiempo_transcurrido_move >= self.move_rate_ms:
             if (abs(self.y_start_jump) - abs(self.rect.y)) > self.power_jump and self.is_jump:
-                print(abs(self.y_start_jump) - abs(self.rect.y))
                 self.move_y = 0
             self.tiempo_transcurrido_move = 0
             self.move_rect_x(self.move_x)
@@ -153,7 +176,11 @@ class Character:
             elif self.is_jump:
                 self.jump(False)
             else:
-                self.automove()  
+                self.automove(player)  
+            if self.is_hit(player) and self.die_on:
+                self.hit_counter += 1
+            
+                
 
     def is_grounded(self,platform_list):
         m_return = False
@@ -171,48 +198,66 @@ class Character:
                         break
         return m_return
 
-    def is_hit(self):
-        pass
-
+    def is_hit(self,player):
+        m_return = False
+        if (self.rect_hit_collision.colliderect(player.rect_attack_collision_r) or self.rect_hit_collision.colliderect(player.rect_attack_collision_l)) and player.is_attack:
+            print("El Heroe me ah Golpeado")           
+            m_return = True
+        return m_return
+    
+    def in_visual(self,player):
+        m_return = False
+        if self.rect_vision.colliderect(player.rect):
+            if self.direction == DIRECTION_L:
+                self.animation = self.attack_l_action
+                m_return = True
+            else:
+                self.animation = self.attack_r_action
+                m_return = True
+        return m_return
+    
     def move_rect_x(self,delta_x=0):
-        '''Mueve los rectangulos en x'''
-        print(self.rect.x)
-        print(delta_x)
+        '''Mueve los rectangulos en x'''        
         self.rect.x += delta_x
         self.rect_ground_collision_r.x += delta_x
         self.rect_ground_collision_l.x += delta_x
-        self.rect_hit_collision_l.x += delta_x
-        self.rect_hit_collision_r.x += delta_x
+        self.rect_hit_collision.x += delta_x
+        self.rect_vision.x += delta_x
+        if self.direction == DIRECTION_R:
+           self.rect_vision = pygame.Rect(self.rect.x+self.rect.w/1.33,self.rect.y+self.rect.h/3,self.rect.w/4,self.rect.h/4)
+        else:
+            self.rect_vision = pygame.Rect(self.rect.x,self.rect.y+self.rect.h/3,self.rect.w/4,self.rect.h/4)
         
+
     def move_rect_y(self,delta_y=0):
         '''Mueve los rectangulos en y'''
         self.rect.y += delta_y
         self.rect_ground_collision_r.y += delta_y
         self.rect_ground_collision_l.y += delta_y
-        self.rect_hit_collision_l.y += delta_y
-        self.rect_hit_collision_r.y += delta_y
+        self.rect_hit_collision.y += delta_y
 
     def do_animation(self,delta_ms):
-        self.tiempo_transcurrido_animation += delta_ms
-        if self.tiempo_transcurrido_animation >= self.frame_rate_ms:
-            self.tiempo_transcurrido_animation = 0
+        self.elapsed_time_animation += delta_ms
+        if self.elapsed_time_animation >= self.frame_rate_ms:
+            self.elapsed_time_animation = 0
             if self.frame < len(self.animation) - 1:
                 self.frame += 1 
             else:
                 self.frame = 0
 
-    def update(self,delta_ms,platform_list): 
-        self.do_movement(delta_ms,platform_list)
+    def update(self,delta_ms,platform_list,player): 
+        self.do_movement(delta_ms,platform_list,player)
         self.do_animation(delta_ms)
 
     def draw(self,screen):
        
         if DEBUG:   
-            pygame.draw.rect(screen,C_WHITE,self.rect)
-            pygame.draw.rect(screen,C_GREEN,self.rect_ground_collision_r)
-            pygame.draw.rect(screen,C_BLUE,self.rect_ground_collision_l)
-            pygame.draw.rect(screen,C_PINK,self.rect_hit_collision_l)
-            pygame.draw.rect(screen,C_BLUE_2,self.rect_hit_collision_r)
+            pygame.draw.rect(screen,C_WHITE,self.rect,2)
+            pygame.draw.rect(screen,C_GREEN,self.rect_ground_collision_r,2)
+            pygame.draw.rect(screen,C_BLUE,self.rect_ground_collision_l,2)
+            pygame.draw.rect(screen,C_RED,self.rect_hit_collision,2)
+            pygame.draw.rect(screen,C_RED,self.rect_vision,2)
+            
             
         self.image = self.animation[self.frame]
         screen.blit(self.image,self.rect)

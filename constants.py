@@ -7,13 +7,37 @@ FPS = 240
 DEBUG = True
 GROUND_LEVEL = 600
 
-#RESOURCES LVL1
-RESOURCES_FOLDER = "Juego_freeknight\Assets\\" # Carpeta donde se encuentran los recursos
-ENEMY_FOLDER = "players\knight_sword\\" # Carpeta con sprites del player
-ENEMY_2_FOLDER = "players\knight_spear\\" # Carpeta con sprites del player
-PLAYER_FOLDER = "players\\freeknight\png\\"
-TILES_FOLDER ="locations\\tileset\graveyard\Tiles\\"
-SELECTED_BG = "locations\set_bg_03\\03\game_background_3.1.png"
+LEVEL_WIDTH = 4096
+LEVEL_HEIGHT = 768
+TILE_SIZE = WINDOWS_HEIGHT/12
+
+#BUTTONS
+RESTART_BUTTON = "Juego_freeknight/mis_assets/btn/restart.png"
+START_BUTTON = "Juego_freeknight/mis_assets/btn/play.png"
+EXIT_BUTTON = "Juego_freeknight/mis_assets/btn/close.png"
+SET_BUTTON = "Juego_freeknight/mis_assets/btn/settings.png"
+BACK_BUTTON = "Juego_freeknight/mis_assets/btn/prew.png"
+NEXT_BUTTON = "Juego_freeknight/mis_assets/btn/next.png"
+SCORE_BUTTON = "Juego_freeknight/mis_assets/btn/prize.png"
+CREDIT_BUTTON = "Juego_freeknight/mis_assets/btn/about.png"
+
+#IMAGES
+RESOURCES_FOLDER = "Juego_freeknight/mis_assets/" # Carpeta donde se encuentran los recursos
+ENEMY_FOLDER = "Characters/knight_sword/" # Carpeta con sprites del player
+ENEMY_2_FOLDER = "Characters/knight_spear/" # Carpeta con sprites del player
+PLAYER_FOLDER = "Characters/freeknight/png/"
+TILES_FOLDER ="tileset/graveyard/Tiles/"
+SELECTED_BG = "Juego_freeknight/mis_assets/background/game_background_3.1.png"
+LIFE_BAR = "Juego_freeknight\mis_assets\Bars\Bar_Segment01.png"
+BLUR = "Juego_freeknight\mis_assets\\background\layers\\smoke.png"
+BG_SCORE = "Juego_freeknight\mis_assets\\background\layers\\smoke.png"
+BG_MAIN_MENU = "Juego_freeknight\mis_assets\\background\layers\\templar.png"
+BG_MAIN_MENU2 = "Juego_freeknight\mis_assets\\background\layers\\templar2.png"
+
+#SOUND
+MAIN_SOUND = "Juego_freeknight\mis_assets\Sounds\main_theme.mp3"
+LVL1_SOUND = "Juego_freeknight\mis_assets\Sounds\\tarkan.mp3"
+SCORE_SCREEN_SOUND = "Juego_freeknight/mis_assets/Sounds/victory.mp3"
 
 #PLAYER CONST
 DIRECTION_R = 1
