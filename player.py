@@ -1,9 +1,6 @@
 import pygame
-from coins import Coin
 from constants import *
 from auxiliar import Auxiliar
-from camera import Camera
-from surfaces import Surfaces
 
 class Player:
     '''Esto es un jugador'''
@@ -48,15 +45,15 @@ class Player:
         self.y_start_jump = 0
         self.rect_ground_collision_r = pygame.Rect(self.rect.x+self.rect.w/3.8,self.rect.y+self.rect.h-10,self.rect.w/3,10)
         self.rect_ground_collision_l = pygame.Rect(self.rect.x+self.rect.w/2.2,self.rect.y+self.rect.h-10,self.rect.w/3,10)
-        self.rect_attack_collision_r = pygame.Rect(self.rect.x+self.rect.w/1.4,self.rect.y+self.rect.h/2,self.rect.w/6,self.rect.h/5)
-        self.rect_attack_collision_l = pygame.Rect(self.rect.x+self.rect.w/8,self.rect.y+self.rect.h/2,self.rect.w/6,self.rect.h/5)
+        self.rect_attack_collision_r = pygame.Rect(self.rect.x+self.rect.w-self.rect.w/3,self.rect.y+self.rect.h/2,self.rect.w/3,self.rect.h/3)
+        self.rect_attack_collision_l = pygame.Rect(-self.rect.x,self.rect.y+self.rect.h/2,self.rect.w/3,self.rect.h/3)
         self.rect_hit_collision = pygame.Rect(self.rect.x+self.rect.w/3.8,self.rect.y+5,self.rect.w/2.1,self.rect.h-15)
         self.hit_counter = 0
         self.is_attack = False
         self.is_dead = False
         self.is_dead_triggered = False
         self.score = 0
-        self.life_bar = 5
+        self.life_bar = 100
         self.die_sound  = pygame.mixer.Sound("Juego_freeknight\mis_assets\Sounds\pMaleDie.wav")
         self.melee_hit = pygame.mixer.Sound("Juego_freeknight\mis_assets\Sounds\eMeleeHit3.wav")
         self.walk_sound = pygame.mixer.Sound("Juego_freeknight\mis_assets\Sounds\pw_step-02.wav")
@@ -69,12 +66,12 @@ class Player:
             self.direction = direction
             if self.direction == DIRECTION_R:
                 self.move_x = self.speed_walk
-                self.animation = self.walk_r_action                    
-                print("Caminando a la derecha")  
+                self.animation = self.walk_r_action    
+                if PRINTS: print("Caminando a la derecha")  
             else:
                 self.move_x = -self.speed_walk
                 self.animation = self.walk_l_action            
-                print("Caminando a la izquierda")
+                if PRINTS: print("Caminando a la izquierda")
             self.frame= 0
             self.walk_sound.play()
 
@@ -96,10 +93,10 @@ class Player:
                 self.y_start_jump = self.rect.y
                 if self.direction == DIRECTION_R:
                     self.animation = self.jump_r_action  
-                    print("Saltando a la derecha")
+                    if PRINTS: print("Saltando a la derecha")
                 else:
                     self.animation = self.jump_l_action
-                    print("Saltando a la izquierda")
+                    if PRINTS: print("Saltando a la izquierda")
                 self.move_y = -self.power_jump
                 self.frame = 0
                 self.is_jump = True
@@ -107,7 +104,7 @@ class Player:
             elif self.in_air == True:
                 self.is_jump = False  
                 self.stay()
-                print("quieto sin saltar")
+                if PRINTS: print("quieto sin saltar")
     
     def attack(self):
         if(self.animation != self.attack_r_action and self.animation != self.attack_l_action):
@@ -119,7 +116,7 @@ class Player:
                 self.move_x = 0
             self.frame= 0
             self.melee_hit.play()
-            print("pego")     
+            if PRINTS: print("pego")     
             
     def run(self,direction):
         if(self.animation != self.run_r_action and self.animation != self.run_l_action):
@@ -132,8 +129,7 @@ class Player:
                 self.move_x = -self.speed_run
             self.frame = 0
             self.run_sound.play()
-
-            print("corro")
+            if PRINTS: print("corro")
 
     def hit(self):
         if(self.animation != self.hit_r_action and self.animation != self.hit_l_action):
@@ -144,8 +140,7 @@ class Player:
                 self.animation = self.hit_l_action
                 self.move_x = 0
             self.frame= 0
-            
-            print("me pega")
+            if PRINTS: print("me pega")
 
     def die(self):        
         if(self.animation != self.die_r_action and self.animation != self.die_l_action):
@@ -157,7 +152,7 @@ class Player:
             self.frame= 7
             self.is_dead_triggered = True
             self.die_sound.play()
-            print("muerto")
+            if PRINTS: print("muerto")
 
     def events(self,action_button,enemy_list):
         '''Gestiona las acciones del personaje'''
@@ -177,8 +172,11 @@ class Player:
             elif action_button[pygame.K_e] and self.is_attack == False:
                 self.attack()
                 self.is_attack = True
-                if self.is_attacking(enemy_list) or self.is_attack:
-                    self.is_attack = False
+                for enemy in enemy_list:
+                    if self.is_collision(enemy) or self.is_attack:
+                        enemy.is_hit(self)
+                        self.is_attack = False
+                        break
             elif not action_button[pygame.K_a] and not action_button[pygame.K_d] and not action_button[pygame.K_SPACE] and not action_button[pygame.K_e]:
                 self.stay()
             elif (action_button[pygame.K_SPACE] and action_button[pygame.K_e]) or (action_button[pygame.K_a] and action_button[pygame.K_d]):
@@ -189,13 +187,13 @@ class Player:
     def enemy_events(self,enemy_list,life_list,delta_ms):
         self.elapsed_time_hit += delta_ms
         lives = self.life_bar
-        if DEBUG:print("Tiempo de golpe "+str(self.elapsed_time_hit))
+        if PRINTS: print("Tiempo de golpe "+str(self.elapsed_time_hit))
         if self.elapsed_time_hit >= 80:
             self.elapsed_time_hit = 0
             for enemy in enemy_list:
                 if self.is_hit(enemy):
                     self.hit_counter += 1
-                    if DEBUG:print("Contador de golpe "+str(self.hit_counter))  
+                    if PRINTS: print("Contador de golpe "+str(self.hit_counter))  
                     if self.hit_counter >= 1:  
                         self.hit()
                         if len(life_list) > 0 and lives > 0:
@@ -208,69 +206,64 @@ class Player:
                         else:
                             self.die()
                             self.is_dead = True
+
                         
-    def do_movement(self, delta_ms,platform_list,enemy_list,life_list):
+    def do_movement(self, delta_ms,world,enemy_list,life_list):
         self.elapsed_time_move += delta_ms
         if self.elapsed_time_move >= self.move_rate_ms:
             if (abs(self.y_start_jump) - abs(self.rect.y)) > self.power_jump and not self.is_jump:
                 self.move_y = 0
             self.elapsed_time_move = 0
             self.move_rect_y(self.move_y) 
-            if (self.direction == DIRECTION_R and self.rect.x <= WINDOWS_WIDTH) or (self.direction == DIRECTION_L and self.rect.x > 0):
+
+            if (self.direction == DIRECTION_R and self.rect.x < WINDOWS_WIDTH - self.rect_hit_collision.width*1.5) or (self.direction == DIRECTION_L and self.rect_hit_collision.x > 0):
                 self.move_rect_x(self.move_x)
+
             self.enemy_events(enemy_list,life_list,delta_ms)
 
-            if self.is_grounded(platform_list) == False:
+            if self.is_grounded(world) == False:
                 self.move_rect_y(self.amount_gravity)
-
+                if self.rect.y > WINDOWS_HEIGHT:
+                    self.die()
+                    self.is_dead = True
             
 
-    def is_grounded(self,platform_list):
+    def is_grounded(self,world):
         m_return = False
-        if self.rect.y >= GROUND_LEVEL:
-            self.in_air = False
-            m_return = True
-        else:
-            for platform in platform_list:
-                if self.direction == DIRECTION_R:
-                    if self.rect_ground_collision_r.colliderect(platform.rect_ground_collision):
-                        m_return = True
-                        self.in_air = False
-                        break
-                else:
-                     if self.rect_ground_collision_l.colliderect(platform.rect_ground_collision):
-                        m_return = True
-                        self.in_air = False
-                        break
+        for platform in world.tile_list:
+            if self.direction == DIRECTION_R:
+                if self.rect_ground_collision_r.colliderect(platform[1]):
+                    m_return = True
+                    self.in_air = False
+                    break
+            elif self.direction == DIRECTION_L:
+                if self.rect_ground_collision_l.colliderect(platform[1]):
+                    m_return = True
+                    self.in_air = False
+                    break
+            else:
+                self.in_air = True
+                m_return = False
         return m_return
     
-    def is_attacking(self,enemy_list):
+    def is_collision(self,enemy):
         m_return = False
-        if len(enemy_list) != 0:
-            for enemy in enemy_list:
-                if self.direction == DIRECTION_R:                    
-                    if self.is_attack and self.animation == self.attack_r_action:
-                        if self.rect_attack_collision_r.colliderect(enemy.rect_hit_collision):
-                            if DEBUG:
-                                print("GOLPEO AL ENEMIGO")   
-                                enemy.is_hit(self)
-                            m_return = True
-                            break
-                elif self.direction == DIRECTION_L:                    
-                    if self.is_attack and self.animation == self.attack_l_action:
-                        if self.rect_attack_collision_l.colliderect(enemy.rect_hit_collision):
-                            if DEBUG:
-                                print("GOLPEO AL ENEMIGO")   
-                            m_return = True
-                            break
-        self.swords_crash_sound.play()
+        if self.is_attack:
+            if self.direction == DIRECTION_R and self.rect_attack_collision_r.colliderect(enemy.rect_hit_collision):
+                if PRINTS: print("GOLPEO AL ENEMIGO") 
+                self.swords_crash_sound.play()
+                m_return = True
+            elif self.direction == DIRECTION_L and self.rect_attack_collision_l.colliderect(enemy.rect_hit_collision):
+                if PRINTS: print("GOLPEO AL ENEMIGO")  
+                self.swords_crash_sound.play()
+                m_return = True
+            else:print("NO GOLPEO A NADIE")  
         return m_return
 
     def is_hit(self,enemy):
         m_return = False
         if self.rect_hit_collision.colliderect(enemy.rect_vision):
-            if DEBUG:
-                print("El enemigo me ah Golpeado")      
+            if PRINTS: print("El enemigo me ah Golpeado")      
             m_return = True
         return m_return
 
@@ -305,8 +298,8 @@ class Player:
                 else:
                     self.frame = 0
 
-    def update(self,delta_ms,platform_list,enemy_list,life_list): 
-        self.do_movement(delta_ms,platform_list,enemy_list,life_list)        
+    def update(self,delta_ms,world,enemy_list,life_list): 
+        self.do_movement(delta_ms,world,enemy_list,life_list)        
         self.do_animation(delta_ms)
 
     def draw(self,screen):

@@ -1,7 +1,5 @@
 import pygame
 from constants import *
-from auxiliar import Auxiliar
-
 
 class Coin:
     def __init__(self,position_x,position_y):
@@ -21,7 +19,7 @@ class Coin:
     def collider(self,player):
         if self.rect_collision.colliderect(player.rect_hit_collision):
             self.is_collected = True
-            print("Gema conseguida")
+            if PRINTS: print("Gema conseguida")
             self.gem_sound.play()
             player.score += 100
     

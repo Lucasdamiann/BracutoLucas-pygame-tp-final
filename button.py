@@ -1,5 +1,6 @@
 import pygame
 from constants import *
+
 class Button:
     def __init__(self,position_x,position_y,image):
         self.image = pygame.transform.scale(pygame.image.load(image),(WINDOWS_WIDTH//10,WINDOWS_HEIGHT//8))
@@ -22,8 +23,7 @@ class Button:
                 self.is_clicked = True
                 action = True
                 self.click_sound.play()
-                if DEBUG:
-                    print("Me clickeaste")
+                if PRINTS: print("Me clickeaste")
         if pygame.mouse.get_pressed()[0] == 0:
             self.is_clicked = False
         return action

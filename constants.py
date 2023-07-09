@@ -4,7 +4,8 @@ WINDOWS_WIDTH =  1024
 
 #GENERAL CONFIGURATION 
 FPS = 240
-DEBUG = True
+DEBUG = False
+PRINTS = True
 GROUND_LEVEL = 600
 
 LEVEL_WIDTH = 4096
@@ -20,11 +21,12 @@ BACK_BUTTON = "Juego_freeknight/mis_assets/btn/prew.png"
 NEXT_BUTTON = "Juego_freeknight/mis_assets/btn/next.png"
 SCORE_BUTTON = "Juego_freeknight/mis_assets/btn/prize.png"
 CREDIT_BUTTON = "Juego_freeknight/mis_assets/btn/about.png"
+PAUSE_BUTTON = "Juego_freeknight/mis_assets/btn/pause.png"
 
 #IMAGES
 RESOURCES_FOLDER = "Juego_freeknight/mis_assets/" # Carpeta donde se encuentran los recursos
 ENEMY_FOLDER = "Characters/knight_sword/" # Carpeta con sprites del player
-ENEMY_2_FOLDER = "Characters/knight_spear/" # Carpeta con sprites del player
+ENEMY_2_FOLDER = "Characters/knight_spear/" 
 PLAYER_FOLDER = "Characters/freeknight/png/"
 TILES_FOLDER ="tileset/graveyard/Tiles/"
 SELECTED_BG = "Juego_freeknight/mis_assets/background/game_background_3.1.png"
@@ -33,6 +35,7 @@ BLUR = "Juego_freeknight\mis_assets\\background\layers\\smoke.png"
 BG_SCORE = "Juego_freeknight\mis_assets\\background\layers\\smoke.png"
 BG_MAIN_MENU = "Juego_freeknight\mis_assets\\background\layers\\templar.png"
 BG_MAIN_MENU2 = "Juego_freeknight\mis_assets\\background\layers\\templar2.png"
+BG_MAIN_MENU3 = "Juego_freeknight\mis_assets\\background\layers\\blur.png"
 
 #SOUND
 MAIN_SOUND = "Juego_freeknight\mis_assets\Sounds\main_theme.mp3"
