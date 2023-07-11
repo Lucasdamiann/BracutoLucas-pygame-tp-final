@@ -41,4 +41,3 @@ class Auxiliar:
             for i in range(repeat_frame):
                 lista.append(surface_fotograma)
         return lista
-    

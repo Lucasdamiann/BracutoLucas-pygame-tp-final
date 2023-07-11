@@ -18,11 +18,10 @@ class Potion:
     def collider(self,player,world):
         if self.rect_collision.colliderect(player.rect_hit_collision):
             self.potion_sound.play()
-            print("Pocion consumida")
+            if PRINTS: print("Pocion consumida")
             world.life_list.append((world.life_bar,world.life_bar.get_rect()))
-            player.life_bar += 1
+            player.life_bar = 100
             self.is_collected = True
 
     def update(self,player,world): 
         self.collider(player,world)
-

@@ -13,6 +13,9 @@ class Portal:
         self.rect_collision = pygame.Rect(self.rect.x+self.rect.w/4,self.rect.y+25,self.rect.w/2,self.rect.h/3)
         self.frame_rate_ms = 250
         self.is_reached = False
+        self.level_2 = False
+        self.level_3 = False
+        self.level_final = False
         self.open_sound = pygame.mixer.Sound(RESOURCES_FOLDER+"Sounds\\aDoor.wav")
         self.elapsed_time_animation = 0
 

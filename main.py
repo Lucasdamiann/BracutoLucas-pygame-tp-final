@@ -9,36 +9,42 @@ from button import Button
 from potion import Potion
 from portal import Portal
 import time
+from boss import Boss
 pygame.init()
 screen = pygame.display.set_mode((WINDOWS_WIDTH,WINDOWS_HEIGHT))
 clock = pygame.time.Clock()
 
-
 start_button = Button(WINDOWS_WIDTH / 4 ,WINDOWS_HEIGHT / 2,START_BUTTON)
-settings_button = Button(WINDOWS_WIDTH / 4 + (start_button.rect.w),WINDOWS_HEIGHT / 2,SET_BUTTON)
+settings_button = Button(WINDOWS_WIDTH / 4 + (start_button.rect.w*2),WINDOWS_HEIGHT / 2,SET_BUTTON)
+exit_button = Button(WINDOWS_WIDTH / 4 + (start_button.rect.w*4),WINDOWS_HEIGHT / 2,EXIT_BUTTON)
 scores_button = Button(WINDOWS_WIDTH / 4 + (start_button.rect.w*2),WINDOWS_HEIGHT / 2,SCORE_BUTTON)
 credit_button = Button(WINDOWS_WIDTH / 4 + (start_button.rect.w*3),WINDOWS_HEIGHT / 2,CREDIT_BUTTON)
-exit_button = Button(WINDOWS_WIDTH / 4 + (start_button.rect.w*4),WINDOWS_HEIGHT / 2,EXIT_BUTTON)
 back_button = Button(WINDOWS_WIDTH / 12,WINDOWS_HEIGHT / 12,BACK_BUTTON)
 next_button = Button(WINDOWS_WIDTH / 2 - (start_button.rect.w/2),WINDOWS_HEIGHT / 2,NEXT_BUTTON)
 pause_button =  Button(WINDOWS_WIDTH / 2 - (start_button.rect.w/2),WINDOWS_HEIGHT / 2,PAUSE_BUTTON)
 restart_button = Button(WINDOWS_WIDTH / 2 - (start_button.rect.w/2),WINDOWS_HEIGHT / 2,RESTART_BUTTON)
+mute_button = Button(WINDOWS_WIDTH / 4 + (start_button.rect.w*3),WINDOWS_HEIGHT/2,MUSIC_OFF_BUTTON)
+unmute_button = Button(WINDOWS_WIDTH / 4 + (start_button.rect.w),WINDOWS_HEIGHT/2,MUSIC_ON_BUTTON)
 
-player = Player(move_x=0,move_y=0,position_x=1,position_y=(WINDOWS_HEIGHT/12),direction=DIRECTION_R,speed_walk=5,speed_run=8,power_jump=100,amount_gravity=14,frame_rate_ms=60,move_rate_ms=30,p_scale=0.15)
+player = Player(move_x=0,move_y=0,position_x=1,position_y=(WINDOWS_HEIGHT)-200,direction=DIRECTION_R,speed_walk=5,speed_run=8,power_jump=100,amount_gravity=14,frame_rate_ms=60,move_rate_ms=30,p_scale=0.15)
 total_time = 5 * 60 #minutos por segundos
 start_time = time.time()
 
 def credits():
     pygame.display.set_caption("Credits")
+    pygame.mixer.music.load(CREDITS_SOUND)
+    pygame.mixer.music.play(-1)
+   
     while True:
         screen.fill(C_BLACK)
         credits_text = pygame.font.SysFont("Middle Ages Deco PERSONAL USE",35).render("CREDITS",True,C_WHITE)
         credits_rect = credits_text.get_rect(center=(WINDOWS_WIDTH/2,WINDOWS_HEIGHT/5))
         back_button.draw(screen)
+        thanks_message = pygame.font.SysFont("Calibri",50).render("¡Gracias por jugar Free Knight!",True,C_WHITE)
         credits_message = pygame.font.SysFont("Calibri",35).render("Creado por Lucas Damian Bracuto",True,C_WHITE)
-        credits_message_rect = credits_message.get_rect(center=(WINDOWS_WIDTH/2,WINDOWS_HEIGHT/3))
         screen.blit(credits_text,credits_rect)
-        screen.blit(credits_message,credits_message_rect)
+        screen.blit(thanks_message,thanks_message.get_rect(center=(WINDOWS_WIDTH/2,WINDOWS_HEIGHT/3)))
+        screen.blit(credits_message,credits_message.get_rect(center=(WINDOWS_WIDTH/2,WINDOWS_HEIGHT/2)))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -47,13 +53,92 @@ def credits():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.click():
                     main_menu()
-                
+
         pygame.display.update()
+
+def set_up_level_final():
+    world_data = [
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [9,9,9,9,9,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [24,0,22,23,23,23,23,23,23,23,23,23,23,24,0,22],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,22],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [24,0,0,0,0,0,0,22,24,0,0,0,0,0,0,22],
+            [0,0,0,22,24,0,0,0,0,0,0,0,0,0,0,],
+            [24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,22],
+            [15,0,13,15,0,13,15,0,13,15,0,13,15,0,13,15],
+        ]
+    world = Surfaces(world_data)
+    bg_image = pygame.transform.scale(pygame.image.load(BG_LVL_FINAL),(WINDOWS_WIDTH,WINDOWS_HEIGHT)).convert() #acelera el juego y consume menos recursos
+    pygame.mixer.Sound(LVL_FINAL_SUBSOUND).play()
+    pygame.mixer.music.load(LVL_FINAL_SOUND)
+    pygame.mixer.music.play(-1)
+    boss = Boss(move_x=0,move_y=0,position_x=WINDOWS_WIDTH/2,position_y=WINDOWS_HEIGHT/16,direction=DIRECTION_L,speed_walk=1,speed_run=2,power_jump=5,amount_gravity=14,frame_rate_ms=60,move_rate_ms=40,p_scale=0.2,attack_on=True,walk_on=True,run_on=True,jump_on=True)
+    boss_list = [boss]
+    coin_list = []
+    coin = Coin(500,600)
+    coin_list.append(coin)
+    coin2 = Coin(600,650)
+    coin_list.append(coin2)
+    coin_out = Coin(0,1000)
+    coin_list.append(coin_out)
+    potion_list = []
+    life_potion = Potion(position_x=TILE_SIZE*7,position_y=TILE_SIZE*11)
+    life_potion_out = Potion(position_x=0,position_y=1000)
+    potion_list.append(life_potion)
+    potion_list.append(life_potion_out)
+    portal = Portal(position_x=1500,position_y=1000)
+    portal.level_final = True
+    play(True,clock,player,portal,bg_image,boss_list,potion_list,coin_list,world)
+
+def set_up_level_3():
+    world_data = [
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,22,23,23,23,23,23,23,23,23,23,23,24,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,22,23,23,23,24,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,22,24,0,0,0,0,0,0,0],
+            [0,0,0,22,24,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [15,0,13,15,0,13,15,0,13,15,0,13,15,0,13,15],
+        ]
+    world = Surfaces(world_data)
+    bg_image = pygame.transform.scale(pygame.image.load(BG_LVL_3),(WINDOWS_WIDTH,WINDOWS_HEIGHT)).convert() #acelera el juego y consume menos recursos
+    pygame.mixer.music.load(LVL3_SOUND)
+    pygame.mixer.music.play(-1)
+    enemy_list = []
+    enemy_1 = Enemy(move_x=0,move_y=0,position_x=500,position_y=GROUND_LEVEL,direction=DIRECTION_L,speed_walk=1,speed_run=2,power_jump=35,amount_gravity=14,frame_rate_ms=90,move_rate_ms=25,p_scale=0.1,attack_on=False,walk_on=False,run_on=False,jump_on=False)
+    enemy_2 = Enemy(move_x=0,move_y=0,position_x=300,position_y=601,direction=DIRECTION_R,speed_walk=2,speed_run=3,power_jump=35,amount_gravity=14,frame_rate_ms=90,move_rate_ms=25,p_scale=0.1,attack_on=False,walk_on=False,run_on=False,jump_on=False)
+    enemy_list.append(enemy_1)
+    enemy_list.append(enemy_2)
+    coin_list = []
+    coin = Coin(500,600)
+    coin_list.append(coin)
+    coin2 = Coin(600,650)
+    coin_list.append(coin2)
+    coin_out = Coin(0,1000)
+    coin_list.append(coin_out)
+    potion_list = []
+    life_potion = Potion(position_x=TILE_SIZE*7,position_y=TILE_SIZE*11)
+    life_potion_out = Potion(position_x=0,position_y=1000)
+    potion_list.append(life_potion)
+    potion_list.append(life_potion_out)
+    portal = Portal(position_x=500,position_y=WINDOWS_HEIGHT/2)
+    portal.level_3 = True
+
+    play(True,clock,player,portal,bg_image,enemy_list,potion_list,coin_list,world)
 
 def set_up_level_2():
     world_data = [
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [9,9,9,9,9,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -66,9 +151,9 @@ def set_up_level_2():
             [10,11,11,12,0,10,11,11,11,12,0,10,11,11,11,12],
         ]
     world = Surfaces(world_data)
-    bg_image = pygame.transform.scale(pygame.image.load(SELECTED_BG),(WINDOWS_WIDTH,WINDOWS_HEIGHT)).convert() #acelera el juego y consume menos recursos
-    pygame.mixer.music.load(LVL1_SOUND)
-    pygame.mixer.music.play()
+    bg_image = pygame.transform.scale(pygame.image.load(BG_LVL_2),(WINDOWS_WIDTH,WINDOWS_HEIGHT)).convert() #acelera el juego y consume menos recursos
+    pygame.mixer.music.load(LVL2_SOUND)
+    pygame.mixer.music.play(-1)
     enemy_list = []
     enemy_1 = Enemy(move_x=0,move_y=0,position_x=500,position_y=GROUND_LEVEL,direction=DIRECTION_L,speed_walk=1,speed_run=2,power_jump=35,amount_gravity=14,frame_rate_ms=90,move_rate_ms=25,p_scale=0.1,attack_on=False,walk_on=False,run_on=False,jump_on=False)
     enemy_2 = Enemy(move_x=0,move_y=0,position_x=300,position_y=601,direction=DIRECTION_R,speed_walk=2,speed_run=3,power_jump=35,amount_gravity=14,frame_rate_ms=90,move_rate_ms=25,p_scale=0.1,attack_on=False,walk_on=False,run_on=False,jump_on=False)
@@ -86,14 +171,14 @@ def set_up_level_2():
     life_potion_out = Potion(position_x=0,position_y=1000)
     potion_list.append(life_potion)
     potion_list.append(life_potion_out)
-    portal = Portal(position_x=500,position_y=WINDOWS_HEIGHT/2)
+    portal = Portal(position_x=200,position_y=600)
+    portal.level_2 = True
     
     play(True,clock,player,portal,bg_image,enemy_list,potion_list,coin_list,world)
 
-def set_up_level_1():
-        
+def set_up_level_1(): 
+
     world_data = [
-            [9,9,9,9,9,9,0,0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -104,15 +189,16 @@ def set_up_level_1():
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0,0,0,0,16,17,17,18],
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [1,2,2,2,2,2,2,2,2,2,2,0,2,2,2,3],
         ]
     world = Surfaces(world_data)
-    bg_image = pygame.transform.scale(pygame.image.load(SELECTED_BG),(WINDOWS_WIDTH,WINDOWS_HEIGHT)).convert() #acelera el juego y consume menos recursos
+    bg_image = pygame.transform.scale(pygame.image.load(BG_LVL_1),(WINDOWS_WIDTH,WINDOWS_HEIGHT)).convert() #acelera el juego y consume menos recursos
     pygame.mixer.music.load(LVL1_SOUND)
-    pygame.mixer.music.play()
+    pygame.mixer.music.play(-1)
     enemy_list = []
-    enemy_1 = Enemy(move_x=0,move_y=0,position_x=50,position_y=GROUND_LEVEL,direction=DIRECTION_L,speed_walk=1,speed_run=2,power_jump=20,amount_gravity=10,frame_rate_ms=90,move_rate_ms=25,p_scale=0.1,attack_on=False,walk_on=False,run_on=False,jump_on=False)
-    enemy_2 = Enemy(move_x=0,move_y=0,position_x=300,position_y=601,direction=DIRECTION_R,speed_walk=2,speed_run=3,power_jump=35,amount_gravity=14,frame_rate_ms=90,move_rate_ms=25,p_scale=0.1,attack_on=False,walk_on=False,run_on=False,jump_on=False)
+    enemy_1 = Enemy(move_x=0,move_y=0,position_x=500,position_y=GROUND_LEVEL,direction=DIRECTION_L,speed_walk=1,speed_run=2,power_jump=20,amount_gravity=10,frame_rate_ms=90,move_rate_ms=25,p_scale=0.1,attack_on=True,walk_on=True,run_on=False,jump_on=False)
+    enemy_2 = Enemy(move_x=0,move_y=0,position_x=300,position_y=601,direction=DIRECTION_R,speed_walk=2,speed_run=3,power_jump=35,amount_gravity=14,frame_rate_ms=90,move_rate_ms=25,p_scale=0.1,attack_on=True,walk_on=True,run_on=False,jump_on=False)
     enemy_list.append(enemy_1)
     enemy_list.append(enemy_2)
     coin_list = []
@@ -128,10 +214,9 @@ def set_up_level_1():
     potion_list.append(life_potion)
     potion_list.append(life_potion_out)
     portal = Portal(position_x=900,position_y=GROUND_LEVEL+30)
-    
     play(True,clock,player,portal,bg_image,enemy_list,potion_list,coin_list,world)
 
-def score():
+def score(portal):
     pygame.display.set_caption("Scores")
     pygame.mixer.music.load(SCORE_SCREEN_SOUND)
     pygame.mixer.music.play(-1)
@@ -139,8 +224,8 @@ def score():
     while True:
         screen.fill(C_PEACH)
         settings_text = pygame.font.SysFont("Middle Ages Deco PERSONAL USE",35).render("SCORES",True,C_WHITE)
-        font = pygame.font.SysFont("Middle Ages Deco PERSONAL USE",35).render("PLAYER: "+str(player.score),True,C_BLACK)
-        next_text = pygame.font.SysFont("Middle Ages Deco PERSONAL USE",25).render("NEXT LEVEL",True,C_WHITE)
+        font = pygame.font.SysFont("Terminal",35).render("PLAYER: "+str(player.score),True,C_BLACK)
+        next_text = pygame.font.SysFont("Terminal",25).render("NEXT LEVEL",True,C_WHITE)
         screen.blit(bg_score,bg_score.get_rect())
         settings_rect = settings_text.get_rect(center=(WINDOWS_WIDTH/2,WINDOWS_HEIGHT/5))
         back_button.draw(screen)
@@ -157,8 +242,14 @@ def score():
                 if back_button.click():
                     main_menu()
                 elif next_button.click():
-                    set_up_level_2()
-                
+                    print(portal.level_2)
+                    print(portal.level_3)
+                    if not portal.level_2 and not portal.level_3:
+                        set_up_level_2()
+                    elif not portal.level_3:
+                        set_up_level_3()
+                    elif not portal.level_final:
+                        set_up_level_final()
         pygame.display.update()
 
 def timer(total_time, start_time):
@@ -174,10 +265,11 @@ def timer(total_time, start_time):
 def play(run,clock,player,portal,bg_image,enemy_list,potion_list,coin_list,world):
     while run:
         screen.blit(bg_image,bg_image.get_rect())
-        delta_ms = clock.tick(FPS) 
+        delta_ms = clock.tick(FPS)
         timer(total_time,start_time)
         font = pygame.font.SysFont("System",35).render("SCORE: "+str(player.score),True,C_YELLOW_2)
-        life = pygame.font.SysFont("System",35).render("LIFE: "+str(world.life_list),True,C_PINK)
+        life = pygame.font.SysFont("System",35).render("LIFE: "+str(int((player.life_bar)/15)),True,C_PINK)
+
         for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
@@ -189,8 +281,8 @@ def play(run,clock,player,portal,bg_image,enemy_list,potion_list,coin_list,world
         screen.blit(life,(10,150))
         world.draw(screen)
         world.draw_life(screen)
-        pressed_key = pygame.key.get_pressed() 
-        
+        pressed_key = pygame.key.get_pressed()
+
         #monedas
         if len(coin_list) > 0:
             for coin in coin_list:
@@ -204,8 +296,12 @@ def play(run,clock,player,portal,bg_image,enemy_list,potion_list,coin_list,world
         portal.draw(screen)
         portal.update(delta_ms,player)
         if portal.is_reached:
-            score()
-        #potion de cura
+            score(portal)
+
+        if player.game_complete:
+            credits()
+
+        #pocion
         if len(potion_list) > 0:
             for potion in potion_list:
                 potion.draw(screen)
@@ -218,8 +314,8 @@ def play(run,clock,player,portal,bg_image,enemy_list,potion_list,coin_list,world
             enemy.update(delta_ms,player,world)
             if enemy.is_dead:
                 enemy_list.remove(enemy)
-       
-        
+
+
         player.draw(screen)
         if player.is_dead == False:
             player.events(pressed_key,enemy_list)
@@ -229,19 +325,21 @@ def play(run,clock,player,portal,bg_image,enemy_list,potion_list,coin_list,world
             screen.blit(lose,(WINDOWS_WIDTH/2 - (lose.get_width()/2),WINDOWS_HEIGHT/3))
             if restart_button.draw(screen) and restart_button.click():
                 player.reset(move_x=0,move_y=0,position_x=1,position_y=(WINDOWS_HEIGHT/12),direction=DIRECTION_R,speed_walk=5,speed_run=8,power_jump=100,amount_gravity=14,frame_rate_ms=60,move_rate_ms=30,p_scale=0.15)
-        
+
         pygame.display.flip()
 
 def settings():
     pygame.display.set_caption("Settings")
     blur = pygame.transform.scale(pygame.image.load(BLUR),(WINDOWS_WIDTH,WINDOWS_HEIGHT))
-    
+
     while True:
         screen.fill(C_BLUE_2)
         screen.blit(blur,blur.get_rect())
         settings_text = pygame.font.SysFont("Middle Ages Deco PERSONAL USE",35).render("SETTINGS",True,C_WHITE)
         settings_rect = settings_text.get_rect(center=(WINDOWS_WIDTH/2,WINDOWS_HEIGHT/5))
         back_button.draw(screen)
+        mute_button.draw(screen)
+        unmute_button.draw(screen)
         screen.blit(settings_text,settings_rect)
 
         for event in pygame.event.get():
@@ -251,9 +349,13 @@ def settings():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.click():
                     main_menu()
-                
+                elif mute_button.click():
+                    pygame.mixer.music.set_volume(0.0)
+                elif unmute_button.click():
+                    pygame.mixer.music.set_volume(1)
+
         pygame.display.update()
-        
+
 def main_menu():
     pygame.display.set_caption("Menu")
     pygame.mixer.music.load(MAIN_SOUND)
@@ -271,8 +373,6 @@ def main_menu():
         start_button.draw(screen)
         settings_button.draw(screen)
         exit_button.draw(screen)
-        scores_button.draw(screen)
-        credit_button.draw(screen)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -283,10 +383,6 @@ def main_menu():
                     set_up_level_1()
                 elif settings_button.click():
                     settings()
-                elif scores_button.click():
-                    score()
-                elif credit_button.click():
-                    credits()
                 elif exit_button.click():
                     pygame.quit()
                     sys.exit()

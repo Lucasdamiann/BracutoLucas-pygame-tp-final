@@ -102,42 +102,42 @@ class Surfaces:
                     img_rect.x = col_counter * TILE_SIZE
                     img_rect.y = row_counter * TILE_SIZE
                     tile = (img,img_rect)
-                    self.life_list.append(tile)
+                    self.tile_list.append(tile)
                 elif tile == 11:
                     img = self.floor_c_snow
                     img_rect = img.get_rect()
                     img_rect.x = col_counter * TILE_SIZE
                     img_rect.y = row_counter * TILE_SIZE
                     tile = (img,img_rect)
-                    self.life_list.append(tile)
+                    self.tile_list.append(tile)
                 elif tile == 12:
                     img = self.floor_r_snow
                     img_rect = img.get_rect()
                     img_rect.x = col_counter * TILE_SIZE
                     img_rect.y = row_counter * TILE_SIZE
                     tile = (img,img_rect)
-                    self.life_list.append(tile)
+                    self.tile_list.append(tile)
                 elif tile == 13:
                     img = self.floor_l_forest
                     img_rect = img.get_rect()
                     img_rect.x = col_counter * TILE_SIZE
                     img_rect.y = row_counter * TILE_SIZE
                     tile = (img,img_rect)
-                    self.life_list.append(tile)
+                    self.tile_list.append(tile)
                 elif tile == 14:
                     img = self.floor_c_forest
                     img_rect = img.get_rect()
                     img_rect.x = col_counter * TILE_SIZE
                     img_rect.y = row_counter * TILE_SIZE
                     tile = (img,img_rect)
-                    self.life_list.append(tile)
+                    self.tile_list.append(tile)
                 elif tile == 15:
                     img = self.floor_r_forest
                     img_rect = img.get_rect()
                     img_rect.x = col_counter * TILE_SIZE
                     img_rect.y = row_counter * TILE_SIZE
                     tile = (img,img_rect)
-                    self.life_list.append(tile)
+                    self.tile_list.append(tile)
                 elif tile == 16:
                     img = self.platform_l
                     img_rect = img.get_rect()
@@ -165,42 +165,42 @@ class Surfaces:
                     img_rect.x = col_counter * TILE_SIZE
                     img_rect.y = row_counter * TILE_SIZE
                     tile = (img,img_rect)
-                    self.life_list.append(tile)
+                    self.tile_list.append(tile)
                 elif tile == 20:
                     img = self.platform_c_snow
                     img_rect = img.get_rect()
                     img_rect.x = col_counter * TILE_SIZE
                     img_rect.y = row_counter * TILE_SIZE
                     tile = (img,img_rect)
-                    self.life_list.append(tile)
+                    self.tile_list.append(tile)
                 elif tile == 21:
                     img = self.platform_r_snow
                     img_rect = img.get_rect()
                     img_rect.x = col_counter * TILE_SIZE
                     img_rect.y = row_counter * TILE_SIZE
                     tile = (img,img_rect)
-                    self.life_list.append(tile)
+                    self.tile_list.append(tile)
                 elif tile == 22:
                     img = self.platform_l_forest
                     img_rect = img.get_rect()
                     img_rect.x = col_counter * TILE_SIZE
                     img_rect.y = row_counter * TILE_SIZE
                     tile = (img,img_rect)
-                    self.life_list.append(tile)
+                    self.tile_list.append(tile)
                 elif tile == 23:
                     img = self.platform_c_forest
                     img_rect = img.get_rect()
                     img_rect.x = col_counter * TILE_SIZE
                     img_rect.y = row_counter * TILE_SIZE
                     tile = (img,img_rect)
-                    self.life_list.append(tile)
+                    self.tile_list.append(tile)
                 elif tile == 24:
                     img = self.platform_r_forest
                     img_rect = img.get_rect()
                     img_rect.x = col_counter * TILE_SIZE
                     img_rect.y = row_counter * TILE_SIZE
                     tile = (img,img_rect)
-                    self.life_list.append(tile)
+                    self.tile_list.append(tile)
                 col_counter += 1
             row_counter += 1
 
@@ -213,5 +213,3 @@ class Surfaces:
     def draw_life(self,screen):
         for life in self.life_list:
             screen.blit(life[0],life[1])   
-            
-

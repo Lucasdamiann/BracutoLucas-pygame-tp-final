@@ -3,7 +3,7 @@ from constants import *
 from auxiliar import Auxiliar
 
 class Enemy:
-    def __init__(self,move_x=0,move_y=0,position_x=0,position_y=0,direction=0,speed_walk=0,speed_run=0,power_jump=0,amount_gravity=0,frame_rate_ms=0,move_rate_ms=0,p_scale=1,walk_ms=100,run_ms=500,stay_ms=550,jump_ms=552,attack_ms=680,walk_on=True,run_on=True,stay_on=True,jump_on=True,attack_on=True,die_on=True) -> None:
+    def __init__(self,move_x=0,move_y=0,position_x=0,position_y=0,direction=0,speed_walk=0,speed_run=0,power_jump=0,amount_gravity=0,frame_rate_ms=0,move_rate_ms=0,p_scale=1,walk_ms=100,run_ms=500,stay_ms=550,jump_ms=552,attack_ms=680,walk_on=True,run_on=True,stay_on=True,jump_on=True,attack_on=True,die_on=True):
         self.walk_r_action = Auxiliar.getSurfaceFromSeparateFiles(RESOURCES_FOLDER+ENEMY_FOLDER+"WALK\_WALK_00{0}.png",0,7,flip=False,scale=p_scale)
         self.walk_l_action = Auxiliar.getSurfaceFromSeparateFiles(RESOURCES_FOLDER+ENEMY_FOLDER+"WALK\_WALK_00{0}.png",0,7,flip=True,scale=p_scale)
         self.jump_r_action = Auxiliar.getSurfaceFromSeparateFiles(RESOURCES_FOLDER+ENEMY_FOLDER+"JUMP\_JUMP_00{0}.png",0,7,flip=False,scale=p_scale)
@@ -47,12 +47,13 @@ class Enemy:
         self.attack_on = attack_on
         self.attack_ms = attack_ms
         self.die_on = die_on
-        self.rect_ground_collision_r = pygame.Rect(self.rect.x+self.rect.w/4.5,self.rect.y+self.rect.h-10,self.rect.w/4,10)
-        self.rect_ground_collision_l = pygame.Rect(self.rect.x+self.rect.w/1.8,self.rect.y+self.rect.h-10,self.rect.w/4,10)
+        self.rect_ground_collision_r = pygame.Rect(self.rect.x+self.rect.w/4.5,self.rect.y+self.rect.h-15,self.rect.w/4,10)
+        self.rect_ground_collision_l = pygame.Rect(self.rect.x+self.rect.w/1.8,self.rect.y+self.rect.h-15,self.rect.w/4,10)
         self.rect_hit_collision = pygame.Rect(self.rect.x+self.rect.w/3,self.rect.y+5,self.rect.w/3,self.rect.h-15)
         self.rect_vision = pygame.Rect(self.rect.x,self.rect.y+self.rect.h/3,self.rect.w/2,self.rect.h/4)
         self.is_dead = False
         self.die_sound = pygame.mixer.Sound("Juego_freeknight\mis_assets\Sounds\mAssassinDie.wav")
+        self.swords_crash_sound = pygame.mixer.Sound("Juego_freeknight\mis_assets\Sounds\eMeleeHit5.wav")
         self.life = 200
         
     def walk(self,direction):
@@ -123,6 +124,7 @@ class Enemy:
         '''Gestiona las acciones del personaje'''
         if self.is_dead == False:
             self.time_acumulator +=1  
+            print( self.time_acumulator)
             if self.direction == DIRECTION_L and self.time_acumulator <= self.walk_ms and self.walk_on:
                 self.walk(DIRECTION_L)
                 self.time_acumulator +=1
@@ -149,8 +151,7 @@ class Enemy:
                     self.direction = DIRECTION_L
             if self.in_visual(player):
                 self.attack()
-            else:
-                self.stay()
+            
         
     
     def do_movement(self, delta_ms,player,world):
@@ -172,6 +173,9 @@ class Enemy:
                 self.die()
                 self.is_dead = True
                 player.score += 100
+            if self.rect.y > WINDOWS_HEIGHT:
+                self.die()
+                self.is_dead = True
                 
     def is_grounded(self,world):
         m_return = False
@@ -256,4 +260,3 @@ class Enemy:
             
         self.image = self.animation[self.frame]
         screen.blit(self.image,self.rect)
-        

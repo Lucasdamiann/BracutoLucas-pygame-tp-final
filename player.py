@@ -55,11 +55,12 @@ class Player:
         self.score = 0
         self.life_bar = 100
         self.die_sound  = pygame.mixer.Sound("Juego_freeknight\mis_assets\Sounds\pMaleDie.wav")
-        self.melee_hit = pygame.mixer.Sound("Juego_freeknight\mis_assets\Sounds\eMeleeHit3.wav")
+        self.melee_hit = pygame.mixer.Sound("Juego_freeknight\mis_assets\Sounds\eSwingWeapon1.wav")
         self.walk_sound = pygame.mixer.Sound("Juego_freeknight\mis_assets\Sounds\pw_step-02.wav")
         self.run_sound = pygame.mixer.Sound("Juego_freeknight\mis_assets\Sounds\pWalk(Grass).wav")
         self.swords_crash_sound = pygame.mixer.Sound("Juego_freeknight\mis_assets\Sounds\eMeleeHit5.wav")
-
+        self.game_complete = False
+        
     def walk(self,direction):
         '''comentar los metodos'''
         if(self.animation != self.walk_r_action and self.animation != self.walk_l_action):
@@ -98,7 +99,7 @@ class Player:
                     self.animation = self.jump_l_action
                     if PRINTS: print("Saltando a la izquierda")
                 self.move_y = -self.power_jump
-                self.frame = 0
+                # self.frame = 0
                 self.is_jump = True
                 self.in_air = True
             elif self.in_air == True:
@@ -114,7 +115,6 @@ class Player:
             else:
                 self.animation = self.attack_l_action                
                 self.move_x = 0
-            self.frame= 0
             self.melee_hit.play()
             if PRINTS: print("pego")     
             
@@ -149,7 +149,6 @@ class Player:
             else:
                 self.animation = self.die_l_action
             self.move_x = 0
-            self.frame= 7
             self.is_dead_triggered = True
             self.die_sound.play()
             if PRINTS: print("muerto")
@@ -187,7 +186,6 @@ class Player:
     def enemy_events(self,enemy_list,life_list,delta_ms):
         self.elapsed_time_hit += delta_ms
         lives = self.life_bar
-        if PRINTS: print("Tiempo de golpe "+str(self.elapsed_time_hit))
         if self.elapsed_time_hit >= 80:
             self.elapsed_time_hit = 0
             for enemy in enemy_list:
@@ -226,20 +224,21 @@ class Player:
                 if self.rect.y > WINDOWS_HEIGHT:
                     self.die()
                     self.is_dead = True
-            
 
     def is_grounded(self,world):
         m_return = False
         for platform in world.tile_list:
             if self.direction == DIRECTION_R:
-                if self.rect_ground_collision_r.colliderect(platform[1]):
+                if self.rect_ground_collision_r.colliderect(platform[1].x,platform[1].y,platform[1].w,5):
                     m_return = True
                     self.in_air = False
+                    self.is_jump = False
                     break
             elif self.direction == DIRECTION_L:
                 if self.rect_ground_collision_l.colliderect(platform[1]):
                     m_return = True
                     self.in_air = False
+                    self.is_jump = False
                     break
             else:
                 self.in_air = True
@@ -270,7 +269,6 @@ class Player:
 
     def move_rect_x(self,delta_x=0):
         '''Mueve los rectangulos en x'''
-        
         self.rect.x += delta_x
         self.rect_ground_collision_r.x += delta_x
         self.rect_ground_collision_l.x += delta_x
@@ -312,4 +310,3 @@ class Player:
             pygame.draw.rect(screen,C_PINK,self.rect_hit_collision,2)
         self.image = self.animation[self.frame]
         screen.blit(self.image,self.rect)
-        

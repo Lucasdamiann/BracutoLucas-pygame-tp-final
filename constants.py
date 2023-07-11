@@ -3,13 +3,11 @@ WINDOWS_HEIGHT = 768
 WINDOWS_WIDTH =  1024
 
 #GENERAL CONFIGURATION 
-FPS = 240
+FPS = 30
 DEBUG = False
 PRINTS = True
+MUTE = True
 GROUND_LEVEL = 600
-
-LEVEL_WIDTH = 4096
-LEVEL_HEIGHT = 768
 TILE_SIZE = WINDOWS_HEIGHT/12
 
 #BUTTONS
@@ -22,14 +20,19 @@ NEXT_BUTTON = "Juego_freeknight/mis_assets/btn/next.png"
 SCORE_BUTTON = "Juego_freeknight/mis_assets/btn/prize.png"
 CREDIT_BUTTON = "Juego_freeknight/mis_assets/btn/about.png"
 PAUSE_BUTTON = "Juego_freeknight/mis_assets/btn/pause.png"
+MUSIC_OFF_BUTTON = "Juego_freeknight/mis_assets/btn/music_off.png"
+MUSIC_ON_BUTTON = "Juego_freeknight/mis_assets/btn/music.png"
 
 #IMAGES
 RESOURCES_FOLDER = "Juego_freeknight/mis_assets/" # Carpeta donde se encuentran los recursos
 ENEMY_FOLDER = "Characters/knight_sword/" # Carpeta con sprites del player
-ENEMY_2_FOLDER = "Characters/knight_spear/" 
+BOSS_FOLDER = "Characters/knight_spear/" 
 PLAYER_FOLDER = "Characters/freeknight/png/"
 TILES_FOLDER ="tileset/graveyard/Tiles/"
-SELECTED_BG = "Juego_freeknight/mis_assets/background/game_background_3.1.png"
+BG_LVL_1 = "Juego_freeknight/mis_assets/background/game_background_3.1.png"
+BG_LVL_2 = "Juego_freeknight/mis_assets/background/game_background_1.png"
+BG_LVL_3 = "Juego_freeknight/mis_assets/background/3_game_background.png"
+BG_LVL_FINAL= "Juego_freeknight/mis_assets/background/2_game_background.png"
 LIFE_BAR = "Juego_freeknight\mis_assets\Bars\Bar_Segment01.png"
 BLUR = "Juego_freeknight\mis_assets\\background\layers\\smoke.png"
 BG_SCORE = "Juego_freeknight\mis_assets\\background\layers\\smoke.png"
@@ -39,8 +42,13 @@ BG_MAIN_MENU3 = "Juego_freeknight\mis_assets\\background\layers\\blur.png"
 
 #SOUND
 MAIN_SOUND = "Juego_freeknight\mis_assets\Sounds\main_theme.mp3"
-LVL1_SOUND = "Juego_freeknight\mis_assets\Sounds\\tarkan.mp3"
+LVL1_SOUND = "Juego_freeknight\mis_assets\Sounds\\aida.mp3"
+LVL2_SOUND = "Juego_freeknight\mis_assets\Sounds\\tarkan.mp3"
+LVL3_SOUND = "Juego_freeknight\mis_assets\Sounds\\iChaosCastle.wav"
+LVL_FINAL_SOUND = "Juego_freeknight\mis_assets\Sounds\\iBloodCastle.wav"
+LVL_FINAL_SUBSOUND = "Juego_freeknight\mis_assets\Sounds\\iEventStart.wav"
 SCORE_SCREEN_SOUND = "Juego_freeknight/mis_assets/Sounds/victory.mp3"
+CREDITS_SOUND = "Juego_freeknight/mis_assets/Sounds/iEventEnd.wav"
 
 #PLAYER CONST
 DIRECTION_R = 1
@@ -58,3 +66,6 @@ C_BLUE_2 = (38, 0, 160)
 C_YELLOW_2 = (255, 174, 0)
 C_GREEEN_2 = (38, 137, 0)
 C_ORANGE = (255, 81, 0)
+
+#level flags
+LEVEL_COMPLETE = False
