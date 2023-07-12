@@ -1,3 +1,4 @@
+import json
 import sys
 import pygame
 from constants import *
@@ -10,6 +11,15 @@ from potion import Potion
 from portal import Portal
 import time
 from boss import Boss
+
+def load_levels(level_data : str) -> list:
+    '''load the information from a json to a list
+    param: a path of an archive json
+    return: a list of pokemons'''
+    with open(level_data,"r") as file_object:
+        levels_list = json.load(file_object)["levels"]
+        return levels_list
+
 pygame.init()
 screen = pygame.display.set_mode((WINDOWS_WIDTH,WINDOWS_HEIGHT))
 clock = pygame.time.Clock()
@@ -57,20 +67,7 @@ def credits():
         pygame.display.update()
 
 def set_up_level_final():
-    world_data = [
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [9,9,9,9,9,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [24,0,22,23,23,23,23,23,23,23,23,23,23,24,0,22],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,22],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [24,0,0,0,0,0,0,22,24,0,0,0,0,0,0,22],
-            [0,0,0,22,24,0,0,0,0,0,0,0,0,0,0,],
-            [24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,22],
-            [15,0,13,15,0,13,15,0,13,15,0,13,15,0,13,15],
-        ]
+    world_data = load_levels("Juego_freeknight\levels.json")[3]
     world = Surfaces(world_data)
     bg_image = pygame.transform.scale(pygame.image.load(BG_LVL_FINAL),(WINDOWS_WIDTH,WINDOWS_HEIGHT)).convert() #acelera el juego y consume menos recursos
     pygame.mixer.Sound(LVL_FINAL_SUBSOUND).play()
@@ -79,14 +76,14 @@ def set_up_level_final():
     boss = Boss(move_x=0,move_y=0,position_x=WINDOWS_WIDTH/2,position_y=WINDOWS_HEIGHT/16,direction=DIRECTION_L,speed_walk=1,speed_run=2,power_jump=5,amount_gravity=14,frame_rate_ms=60,move_rate_ms=40,p_scale=0.2,attack_on=True,walk_on=True,run_on=True,jump_on=True)
     boss_list = [boss]
     coin_list = []
-    coin = Coin(500,600)
+    coin = Coin(520,400)
     coin_list.append(coin)
-    coin2 = Coin(600,650)
+    coin2 = Coin(250,450)
     coin_list.append(coin2)
     coin_out = Coin(0,1000)
     coin_list.append(coin_out)
     potion_list = []
-    life_potion = Potion(position_x=TILE_SIZE*7,position_y=TILE_SIZE*11)
+    life_potion = Potion(position_x=1000,position_y=440)
     life_potion_out = Potion(position_x=0,position_y=1000)
     potion_list.append(life_potion)
     potion_list.append(life_potion_out)
@@ -95,29 +92,18 @@ def set_up_level_final():
     play(True,clock,player,portal,bg_image,boss_list,potion_list,coin_list,world)
 
 def set_up_level_3():
-    world_data = [
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,22,23,23,23,23,23,23,23,23,23,23,24,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,22,23,23,23,24,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,22,24,0,0,0,0,0,0,0],
-            [0,0,0,22,24,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [15,0,13,15,0,13,15,0,13,15,0,13,15,0,13,15],
-        ]
+    world_data = load_levels("Juego_freeknight\levels.json")[2]
     world = Surfaces(world_data)
     bg_image = pygame.transform.scale(pygame.image.load(BG_LVL_3),(WINDOWS_WIDTH,WINDOWS_HEIGHT)).convert() #acelera el juego y consume menos recursos
     pygame.mixer.music.load(LVL3_SOUND)
     pygame.mixer.music.play(-1)
     enemy_list = []
-    enemy_1 = Enemy(move_x=0,move_y=0,position_x=500,position_y=GROUND_LEVEL,direction=DIRECTION_L,speed_walk=1,speed_run=2,power_jump=35,amount_gravity=14,frame_rate_ms=90,move_rate_ms=25,p_scale=0.1,attack_on=False,walk_on=False,run_on=False,jump_on=False)
-    enemy_2 = Enemy(move_x=0,move_y=0,position_x=300,position_y=601,direction=DIRECTION_R,speed_walk=2,speed_run=3,power_jump=35,amount_gravity=14,frame_rate_ms=90,move_rate_ms=25,p_scale=0.1,attack_on=False,walk_on=False,run_on=False,jump_on=False)
+    enemy_1 = Enemy(move_x=0,move_y=0,position_x=500,position_y=400,direction=DIRECTION_L,speed_walk=1,speed_run=2,power_jump=35,amount_gravity=14,frame_rate_ms=90,move_rate_ms=25,p_scale=0.1,attack_on=False,walk_on=False,run_on=False,jump_on=False)
+    enemy_2 = Enemy(move_x=0,move_y=0,position_x=300,position_y=GROUND_LEVEL,direction=DIRECTION_R,speed_walk=2,speed_run=3,power_jump=35,amount_gravity=14,frame_rate_ms=90,move_rate_ms=25,p_scale=0.1,attack_on=False,walk_on=False,run_on=False,jump_on=False)
+    enemy_3 = Enemy(move_x=0,move_y=0,position_x=600,position_y=0,direction=DIRECTION_R,speed_walk=2,speed_run=3,power_jump=35,amount_gravity=14,frame_rate_ms=90,move_rate_ms=25,p_scale=0.1,attack_on=False,walk_on=False,run_on=False,jump_on=False)
     enemy_list.append(enemy_1)
     enemy_list.append(enemy_2)
+    enemy_list.append(enemy_3)
     coin_list = []
     coin = Coin(500,600)
     coin_list.append(coin)
@@ -130,33 +116,20 @@ def set_up_level_3():
     life_potion_out = Potion(position_x=0,position_y=1000)
     potion_list.append(life_potion)
     potion_list.append(life_potion_out)
-    portal = Portal(position_x=500,position_y=WINDOWS_HEIGHT/2)
+    portal = Portal(position_x=630,position_y=440)
     portal.level_3 = True
 
     play(True,clock,player,portal,bg_image,enemy_list,potion_list,coin_list,world)
 
 def set_up_level_2():
-    world_data = [
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,19,20,21,0,0,0,0,0],
-            [0,0,0,19,20,21,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [10,11,11,12,0,10,11,11,11,12,0,10,11,11,11,12],
-        ]
+    world_data = load_levels("Juego_freeknight\levels.json")[1]
     world = Surfaces(world_data)
     bg_image = pygame.transform.scale(pygame.image.load(BG_LVL_2),(WINDOWS_WIDTH,WINDOWS_HEIGHT)).convert() #acelera el juego y consume menos recursos
     pygame.mixer.music.load(LVL2_SOUND)
     pygame.mixer.music.play(-1)
     enemy_list = []
-    enemy_1 = Enemy(move_x=0,move_y=0,position_x=500,position_y=GROUND_LEVEL,direction=DIRECTION_L,speed_walk=1,speed_run=2,power_jump=35,amount_gravity=14,frame_rate_ms=90,move_rate_ms=25,p_scale=0.1,attack_on=False,walk_on=False,run_on=False,jump_on=False)
-    enemy_2 = Enemy(move_x=0,move_y=0,position_x=300,position_y=601,direction=DIRECTION_R,speed_walk=2,speed_run=3,power_jump=35,amount_gravity=14,frame_rate_ms=90,move_rate_ms=25,p_scale=0.1,attack_on=False,walk_on=False,run_on=False,jump_on=False)
+    enemy_1 = Enemy(move_x=0,move_y=0,position_x=500,position_y=400,direction=DIRECTION_L,speed_walk=1,speed_run=2,power_jump=35,amount_gravity=14,frame_rate_ms=90,move_rate_ms=25,p_scale=0.1,attack_on=False,walk_on=False,run_on=False,jump_on=False)
+    enemy_2 = Enemy(move_x=0,move_y=0,position_x=300,position_y=0,direction=DIRECTION_R,speed_walk=2,speed_run=3,power_jump=35,amount_gravity=14,frame_rate_ms=90,move_rate_ms=25,p_scale=0.1,attack_on=False,walk_on=False,run_on=False,jump_on=False)
     enemy_list.append(enemy_1)
     enemy_list.append(enemy_2)
     coin_list = []
@@ -171,27 +144,14 @@ def set_up_level_2():
     life_potion_out = Potion(position_x=0,position_y=1000)
     potion_list.append(life_potion)
     potion_list.append(life_potion_out)
-    portal = Portal(position_x=200,position_y=600)
+    portal = Portal(position_x=900,position_y=185)
     portal.level_2 = True
     
     play(True,clock,player,portal,bg_image,enemy_list,potion_list,coin_list,world)
 
 def set_up_level_1(): 
 
-    world_data = [
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,16,17,17,18],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [1,2,2,2,2,2,2,2,2,2,2,0,2,2,2,3],
-        ]
+    world_data = load_levels("Juego_freeknight\levels.json")[0]
     world = Surfaces(world_data)
     bg_image = pygame.transform.scale(pygame.image.load(BG_LVL_1),(WINDOWS_WIDTH,WINDOWS_HEIGHT)).convert() #acelera el juego y consume menos recursos
     pygame.mixer.music.load(LVL1_SOUND)
@@ -209,7 +169,7 @@ def set_up_level_1():
     coin_out = Coin(0,1000)
     coin_list.append(coin_out)
     potion_list = []
-    life_potion = Potion(position_x=600,position_y=600)
+    life_potion = Potion(position_x=850,position_y=600)
     life_potion_out = Potion(position_x=0,position_y=1000)
     potion_list.append(life_potion)
     potion_list.append(life_potion_out)
@@ -268,7 +228,7 @@ def play(run,clock,player,portal,bg_image,enemy_list,potion_list,coin_list,world
         delta_ms = clock.tick(FPS)
         timer(total_time,start_time)
         font = pygame.font.SysFont("System",35).render("SCORE: "+str(player.score),True,C_YELLOW_2)
-        life = pygame.font.SysFont("System",35).render("LIFE: "+str(int((player.life_bar)/15)),True,C_PINK)
+        life = pygame.font.SysFont("System",35).render("LIFE: "+str(player.life_bar),True,C_PINK)
 
         for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -297,6 +257,7 @@ def play(run,clock,player,portal,bg_image,enemy_list,potion_list,coin_list,world
         portal.update(delta_ms,player)
         if portal.is_reached:
             score(portal)
+            player.position_x=1
 
         if player.game_complete:
             credits()

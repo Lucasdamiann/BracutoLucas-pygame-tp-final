@@ -10,7 +10,7 @@ class Portal:
         self.rect = self.image.get_rect()
         self.rect.x = position_x
         self.rect.y = position_y
-        self.rect_collision = pygame.Rect(self.rect.x+self.rect.w/4,self.rect.y+25,self.rect.w/2,self.rect.h/3)
+        self.rect_collision = pygame.Rect(self.rect.x+self.rect.w/4,self.rect.y+25,self.rect.w/2,self.rect.h/6)
         self.frame_rate_ms = 250
         self.is_reached = False
         self.level_2 = False

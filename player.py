@@ -53,7 +53,7 @@ class Player:
         self.is_dead = False
         self.is_dead_triggered = False
         self.score = 0
-        self.life_bar = 100
+        self.life_bar = 50
         self.die_sound  = pygame.mixer.Sound("Juego_freeknight\mis_assets\Sounds\pMaleDie.wav")
         self.melee_hit = pygame.mixer.Sound("Juego_freeknight\mis_assets\Sounds\eSwingWeapon1.wav")
         self.walk_sound = pygame.mixer.Sound("Juego_freeknight\mis_assets\Sounds\pw_step-02.wav")
@@ -185,27 +185,18 @@ class Player:
 
     def enemy_events(self,enemy_list,life_list,delta_ms):
         self.elapsed_time_hit += delta_ms
-        lives = self.life_bar
+        self.life_bar
         if self.elapsed_time_hit >= 80:
             self.elapsed_time_hit = 0
             for enemy in enemy_list:
                 if self.is_hit(enemy):
-                    self.hit_counter += 1
-                    if PRINTS: print("Contador de golpe "+str(self.hit_counter))  
-                    if self.hit_counter >= 1:  
-                        self.hit()
-                        if len(life_list) > 0 and lives > 0:
-                            for life in life_list[::-1]:
-                                lives -= 1
-                                life_list.remove(life)  
-                                self.life_bar -=1
-                                self.hit_counter = 0  
-                                break
-                        else:
-                            self.die()
-                            self.is_dead = True
+                    self.life_bar -=1
+                    if PRINTS: print("Contador de golpe recibido "+str(self.life_bar))  
+                    self.hit()
+                    if self.life_bar < 1:
+                        self.die()
+                        self.is_dead = True
 
-                        
     def do_movement(self, delta_ms,world,enemy_list,life_list):
         self.elapsed_time_move += delta_ms
         if self.elapsed_time_move >= self.move_rate_ms:

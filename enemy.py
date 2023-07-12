@@ -54,7 +54,7 @@ class Enemy:
         self.is_dead = False
         self.die_sound = pygame.mixer.Sound("Juego_freeknight\mis_assets\Sounds\mAssassinDie.wav")
         self.swords_crash_sound = pygame.mixer.Sound("Juego_freeknight\mis_assets\Sounds\eMeleeHit5.wav")
-        self.life = 200
+        self.life = 2
         
     def walk(self,direction):
         '''comentar los metodos'''
@@ -152,8 +152,6 @@ class Enemy:
             if self.in_visual(player):
                 self.attack()
             
-        
-    
     def do_movement(self, delta_ms,player,world):
         self.tiempo_transcurrido_move += delta_ms
         if self.tiempo_transcurrido_move >= self.move_rate_ms:
@@ -163,6 +161,9 @@ class Enemy:
             self.move_rect_x(self.move_x)
             self.move_rect_y(self.move_y) 
             
+            if (self.direction == DIRECTION_R and self.rect.x < WINDOWS_WIDTH - self.rect.w*1.8) or (self.direction == DIRECTION_L and self.rect.x > 0):
+                self.move_rect_x(self.move_x)
+
             if self.is_grounded(world) == False:
                 self.move_rect_y(self.amount_gravity)
             elif self.is_jump:
