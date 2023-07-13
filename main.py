@@ -21,7 +21,7 @@ start_button = Button(WINDOWS_WIDTH / 4 ,WINDOWS_HEIGHT / 2,START_BUTTON)
 settings_button = Button(WINDOWS_WIDTH / 4 + (start_button.rect.w*2),WINDOWS_HEIGHT / 2,SET_BUTTON)
 exit_button = Button(WINDOWS_WIDTH / 4 + (start_button.rect.w*4),WINDOWS_HEIGHT / 2,EXIT_BUTTON)
 scores_button = Button(WINDOWS_WIDTH / 4 + (start_button.rect.w*2),WINDOWS_HEIGHT / 2,SCORE_BUTTON)
-credit_button = Button(WINDOWS_WIDTH / 4 + (start_button.rect.w*3),WINDOWS_HEIGHT / 2,CREDIT_BUTTON)
+credit_button = Button(WINDOWS_WIDTH / 4 + (start_button.rect.w*6),WINDOWS_HEIGHT / 2 +200,CREDIT_BUTTON)
 back_button = Button(WINDOWS_WIDTH / 12,WINDOWS_HEIGHT / 12,BACK_BUTTON)
 next_button = Button(WINDOWS_WIDTH / 2 - (start_button.rect.w/2),WINDOWS_HEIGHT / 2,NEXT_BUTTON)
 ok_button =  Button(WINDOWS_WIDTH / 2 - (start_button.rect.w/2),WINDOWS_HEIGHT / 2,OK_BUTTON)
@@ -92,6 +92,7 @@ def name_player():
 def rankings():
     pygame.display.set_caption("Ranking")
     bg_ranking = pygame.transform.scale(pygame.image.load(RANKING),(WINDOWS_WIDTH,WINDOWS_HEIGHT))
+    ranking.insert_player(player.score)
     while True:
         screen.fill(C_BLACK)
         ranking_text = pygame.font.SysFont("Middle Ages Deco PERSONAL USE",35).render("RANKING",True,C_WHITE)
@@ -99,7 +100,6 @@ def rankings():
         back_button.draw(screen)
         screen.blit(bg_ranking,bg_ranking.get_rect())
         screen.blit(ranking_text,ranking_rect)
-        ranking.insert_player(player.score)
         ranking.print_ranking(screen)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -352,7 +352,7 @@ def play(run,clock,player,portal,bg_image,enemy_list,potion_list,coin_list,world
         player.draw(screen)
         if player.is_dead == False:
             player.events(pressed_key,enemy_list)
-            player.update(delta_ms,world,enemy_list,world.life_list)
+            player.update(delta_ms,world,enemy_list)
         else:
             lose = pygame.font.SysFont("System",50).render("YOU LOSE: ",True,C_WHITE)
             screen.blit(lose,(WINDOWS_WIDTH/2 - (lose.get_width()/2),WINDOWS_HEIGHT/3))

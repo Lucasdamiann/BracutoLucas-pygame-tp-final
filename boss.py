@@ -186,7 +186,7 @@ class Boss:
                 self.die()
                 self.is_dead = True
                 self.die_sound.play()
-                player.score += 10000
+                player.score += 1000
                 player.game_complete = True
                 
     def is_grounded(self,world):

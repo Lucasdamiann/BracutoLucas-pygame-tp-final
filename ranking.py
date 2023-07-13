@@ -21,18 +21,22 @@ class Ranking:
         connection.commit()
         connection.close()
 
+    
     def print_ranking(self,screen):
         #imprime la tabla ranking
         connection = sqlite3.connect("ranking.db")
         cursor = connection.cursor()
         cursor.execute("SELECT name, score FROM ranking")
-        rows = cursor.fetchall()
-        text = "Ranking"
+        rows = cursor.fetchmany(5)
+        row_acumulator = 0
         for row in rows:
+            print(row)
             name = row[0]
             score = row[1]
             line = "{0}: {1}\n".format(name,score)
-            text += line
-        menu_text = pygame.font.SysFont("Terminal",100).render(text,True,C_BLACK)
-        screen.blit(menu_text,menu_text.get_rect(center=(WINDOWS_WIDTH/2,WINDOWS_HEIGHT/3)))
+            row_acumulator += 50
+            menu_text = pygame.font.SysFont("Arial",50).render(line,True,C_BLACK)
+            screen.blit(menu_text,menu_text.get_rect(center=(WINDOWS_WIDTH/2,WINDOWS_HEIGHT/3+row_acumulator)))
+        row_acumulator = 0
         connection.close()
+

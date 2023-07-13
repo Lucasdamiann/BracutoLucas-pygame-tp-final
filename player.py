@@ -201,7 +201,7 @@ class Player:
                         self.die()
                         self.is_dead = True
 
-    def do_movement(self, delta_ms,world,enemy_list,life_list):
+    def do_movement(self, delta_ms,world,enemy_list):
         #Metodo que manipula el movimiento en x e y del personaje
         #Regista la muerte del personaje
         self.elapsed_time_move += delta_ms
@@ -214,7 +214,7 @@ class Player:
             if (self.direction == DIRECTION_R and self.rect.x < WINDOWS_WIDTH - self.rect_hit_collision.width*1.5) or (self.direction == DIRECTION_L and self.rect_hit_collision.x > 0):
                 self.move_rect_x(self.move_x)
 
-            self.enemy_events(enemy_list,life_list,delta_ms)
+            self.enemy_events(enemy_list,delta_ms)
 
             if self.is_grounded(world) == False:
                 self.move_rect_y(self.amount_gravity)
@@ -297,9 +297,9 @@ class Player:
                 else:
                     self.frame = 0
 
-    def update(self,delta_ms,world,enemy_list,life_list): 
+    def update(self,delta_ms,world,enemy_list): 
         #Metodo de actualizacion de movimientos y animacion
-        self.do_movement(delta_ms,world,enemy_list,life_list)        
+        self.do_movement(delta_ms,world,enemy_list)        
         self.do_animation(delta_ms)
 
     def draw(self,screen):
