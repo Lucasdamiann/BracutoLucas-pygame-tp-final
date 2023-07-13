@@ -29,17 +29,17 @@ class Surfaces:
         self.life_bar = pygame.transform.scale(pygame.image.load(RESOURCES_FOLDER+"Bars\Bar_Segment01.png"),(TILE_SIZE/2,TILE_SIZE/4))
         self.tile_list = []   
         self.life_list = []
-        row_counter = 0
-        for row in data:
-            col_counter = 0
-            for tile in row:
-                if tile == 1:
-                    img = self.floor_l     
-                    img_rect = img.get_rect() 
-                    img_rect.x = col_counter * TILE_SIZE
-                    img_rect.y = row_counter * TILE_SIZE
-                    tile = (img,img_rect)
-                    self.tile_list.append(tile)             
+        row_counter = 0#Contador de filas
+        for row in data:#se recorren las filas dentro del data recibido en la clase
+            col_counter = 0#contador de columnas
+            for tile in row:#Se recorren cada moscaico de cada columna
+                if tile == 1: #si es 1
+                    img = self.floor_l #imagen por defecto
+                    img_rect = img.get_rect()  #rectangulo de la imagen
+                    img_rect.x = col_counter * TILE_SIZE # posicion del rectangulo en x
+                    img_rect.y = row_counter * TILE_SIZE # posicion del rectangulo en y
+                    tile = (img,img_rect) #tupla de imagen y su rectangulo
+                    self.tile_list.append(tile) #lista donde se apendean las tupplas
                 elif tile == 2:
                     img = self.floor_c    
                     img_rect = img.get_rect()
@@ -205,11 +205,13 @@ class Surfaces:
             row_counter += 1
 
     def draw(self,screen):
+        #Metodo que imprime por pantalla
         for tile in self.tile_list:
             screen.blit(tile[0],tile[1])
             if DEBUG:
                 pygame.draw.rect(screen,C_RED,tile[1],2)
 
     def draw_life(self,screen):
+        #Metodo para dibujar la vida por pantalla (en deshuso)
         for life in self.life_list:
             screen.blit(life[0],life[1])   

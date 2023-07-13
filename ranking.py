@@ -7,12 +7,14 @@ class Ranking:
         self.player_name = None
 
     def create_db(self):
+        #crea la base de datos
         connection = sqlite3.connect("ranking.db")
         cursor = connection.cursor()
         cursor.execute("CREATE TABLE IF NOT EXISTS ranking (name TEXT,score TEXT)")  
         connection.close()
 
     def insert_player(self,score):
+        #inserta valores a la tabla de la base de datos
         connection = sqlite3.connect("ranking.db")
         cursor = connection.cursor()
         cursor.execute("INSERT INTO ranking VALUES (?,?)",(self.player_name,score))
@@ -20,6 +22,7 @@ class Ranking:
         connection.close()
 
     def print_ranking(self,screen):
+        #imprime la tabla ranking
         connection = sqlite3.connect("ranking.db")
         cursor = connection.cursor()
         cursor.execute("SELECT name, score FROM ranking")

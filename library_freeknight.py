@@ -18,8 +18,3 @@ def validate_name(received_string : str) -> bool:
     else:
         m_return = False
     return m_return
-  
-def obtener_texto(entrada,ventana):
-        texto_ingresado = entrada.get()
-        print("Texto ingresado:", texto_ingresado)
-        ventana.destroy()

@@ -11,11 +11,13 @@ class Button:
         self.click_sound = pygame.mixer.Sound("Juego_freeknight\mis_assets\Sounds\iButtonError.wav")
         
     def draw(self,screen):
+        #Dibuja en la pantalla
         screen.blit(self.image,self.rect)
         if self.click:
             return True
 
     def click(self):
+        #Registra la posicion del mouse y si hace click
         action = False
         pos = pygame.mouse.get_pos()
         if self.rect.collidepoint(pos):

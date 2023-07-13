@@ -62,7 +62,7 @@ class Player:
         self.game_complete = False
         
     def walk(self,direction):
-        '''comentar los metodos'''
+        #Metodo de animacion de caminata del personaje. Con sonido
         if(self.animation != self.walk_r_action and self.animation != self.walk_l_action):
             self.direction = direction
             if self.direction == DIRECTION_R:
@@ -77,7 +77,7 @@ class Player:
             self.walk_sound.play()
 
     def stay(self):
-        '''Metodo con el cual el personaje se queda quieto'''   
+        #Metodo de animacion del estar quieto del personaje   
         if(self.animation != self.idle_r_action and self.animation != self.idle_l_action):     
             if self.direction == DIRECTION_R:
                 self.animation = self.idle_r_action          
@@ -99,7 +99,6 @@ class Player:
                     self.animation = self.jump_l_action
                     if PRINTS: print("Saltando a la izquierda")
                 self.move_y = -self.power_jump
-                # self.frame = 0
                 self.is_jump = True
                 self.in_air = True
             elif self.in_air == True:
@@ -108,6 +107,7 @@ class Player:
                 if PRINTS: print("quieto sin saltar")
     
     def attack(self):
+        #Metodo de animacion de ataque del personaje. Con sonido
         if(self.animation != self.attack_r_action and self.animation != self.attack_l_action):
             if self.direction == DIRECTION_R:
                 self.animation = self.attack_r_action
@@ -119,6 +119,7 @@ class Player:
             if PRINTS: print("pego")     
             
     def run(self,direction):
+        #Metodo de animacion de correr del personaje. Con sonido
         if(self.animation != self.run_r_action and self.animation != self.run_l_action):
             self.direction = direction
             if self.direction == DIRECTION_R:
@@ -132,6 +133,7 @@ class Player:
             if PRINTS: print("corro")
 
     def hit(self):
+        #Metodo de animacion de daño recibido del personaje.
         if(self.animation != self.hit_r_action and self.animation != self.hit_l_action):
             if self.direction == DIRECTION_R:
                 self.animation = self.hit_r_action
@@ -143,6 +145,7 @@ class Player:
             if PRINTS: print("me pega")
 
     def die(self):        
+        #Metodo de animacion de muerte del personaje. Con sonido
         if(self.animation != self.die_r_action and self.animation != self.die_l_action):
             if self.direction == DIRECTION_R:
                 self.animation = self.die_r_action            
@@ -183,7 +186,8 @@ class Player:
             
 
 
-    def enemy_events(self,enemy_list,life_list,delta_ms):
+    def enemy_events(self,enemy_list,delta_ms):
+        #Gestiona los eventos del enemigo
         self.elapsed_time_hit += delta_ms
         self.life_bar
         if self.elapsed_time_hit >= 80:
@@ -198,6 +202,8 @@ class Player:
                         self.is_dead = True
 
     def do_movement(self, delta_ms,world,enemy_list,life_list):
+        #Metodo que manipula el movimiento en x e y del personaje
+        #Regista la muerte del personaje
         self.elapsed_time_move += delta_ms
         if self.elapsed_time_move >= self.move_rate_ms:
             if (abs(self.y_start_jump) - abs(self.rect.y)) > self.power_jump and not self.is_jump:
@@ -217,6 +223,7 @@ class Player:
                     self.is_dead = True
 
     def is_grounded(self,world):
+        #Metodo que regista la colision con el suelo
         m_return = False
         for platform in world.tile_list:
             if self.direction == DIRECTION_R:
@@ -237,6 +244,7 @@ class Player:
         return m_return
     
     def is_collision(self,enemy):
+        #Metodo que regista la colision del player hacia el enemigo al atacar
         m_return = False
         if self.is_attack:
             if self.direction == DIRECTION_R and self.rect_attack_collision_r.colliderect(enemy.rect_hit_collision):
@@ -251,6 +259,7 @@ class Player:
         return m_return
 
     def is_hit(self,enemy):
+        #Metodo que regista la colision del enemigo hacia el player al atacar
         m_return = False
         if self.rect_hit_collision.colliderect(enemy.rect_vision):
             if PRINTS: print("El enemigo me ah Golpeado")      
@@ -278,6 +287,7 @@ class Player:
         self.rect_hit_collision.y += delta_y
 
     def do_animation(self,delta_ms,animate = True):
+        #Metodo que realiza el cambio de frame
         self.elapsed_time_animation += delta_ms
         if animate:
             if self.elapsed_time_animation >= self.frame_rate_ms:
@@ -288,10 +298,12 @@ class Player:
                     self.frame = 0
 
     def update(self,delta_ms,world,enemy_list,life_list): 
+        #Metodo de actualizacion de movimientos y animacion
         self.do_movement(delta_ms,world,enemy_list,life_list)        
         self.do_animation(delta_ms)
 
     def draw(self,screen):
+        #Metodo de dibujo por pantalla
         if DEBUG:   
             pygame.draw.rect(screen,C_WHITE,self.rect,2)
             pygame.draw.rect(screen,C_GREEN,self.rect_ground_collision_r,2)

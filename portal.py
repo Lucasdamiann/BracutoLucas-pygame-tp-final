@@ -20,6 +20,7 @@ class Portal:
         self.elapsed_time_animation = 0
 
     def collider(self,player,delta_ms):
+        #Metodo que detecta la colision del player con el portal
         self.elapsed_time_animation += delta_ms
         if self.rect_collision.colliderect(player.rect_hit_collision) and not self.is_reached:
             self.open_sound.play()
@@ -27,6 +28,7 @@ class Portal:
                 self.is_reached = True
 
     def do_animation(self,delta_ms):
+        #Metodo que realiza el cambio de frame
         self.elapsed_time_animation += delta_ms
         if self.elapsed_time_animation >= self.frame_rate_ms:
             self.elapsed_time_animation = 0
@@ -36,10 +38,12 @@ class Portal:
                 self.frame = 0
 
     def update(self,delta_ms,player): 
+        #Metodo que actualiza colision y animacion
         self.do_animation(delta_ms)
         self.collider(player,delta_ms)
 
     def draw(self,screen):
+        #Metodo que dibuja por pantalla
         if DEBUG:   
             pygame.draw.rect(screen,C_WHITE,self.rect,2)
             pygame.draw.rect(screen,C_GREEN,self.rect_collision,2)

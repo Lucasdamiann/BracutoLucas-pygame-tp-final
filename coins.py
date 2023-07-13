@@ -11,17 +11,19 @@ class Coin:
         self.gem_sound =  pygame.mixer.Sound(RESOURCES_FOLDER+"Sounds\eGem.wav")
 
     def draw(self,screen):
+        #Metodo que dibuja sobre la pantalla
         if DEBUG:   
-          #  pygame.draw.rect(screen,C_WHITE,self.rect,2)
             pygame.draw.rect(screen,C_RED,self.rect_collision,2)
         screen.blit(self.image,self.rect)
     
     def collider(self,player):
+        #Metodo que regista la colision del enemigo con el botin
         if self.rect_collision.colliderect(player.rect_hit_collision):
             self.is_collected = True
             if PRINTS: print("Gema conseguida")
             self.gem_sound.play()
             player.score += 100
     
-    def update(self,player): 
+    def update(self,player):
+        #Metodo que actualiza las colisiones 
         self.collider(player)
