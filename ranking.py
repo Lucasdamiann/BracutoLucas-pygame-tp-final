@@ -20,7 +20,6 @@ class Ranking:
         cursor.execute("INSERT INTO ranking VALUES (?,?)",(self.player_name,score))
         connection.commit()
         connection.close()
-
     
     def print_ranking(self,screen):
         #imprime la tabla ranking

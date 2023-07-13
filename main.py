@@ -67,8 +67,8 @@ def name_player():
                     ranking.player_name = player_name
                     named = True
                 elif start_button.click() and named:
-                    # set_up_level_1()
-                    set_up_level_final()
+                    set_up_level_1()
+                    # set_up_level_final()
 
             screen.fill(C_BLACK)
             name_text = pygame.font.SysFont("Middle Ages Deco PERSONAL USE",35).render("Name your player",True,C_WHITE)
@@ -97,8 +97,8 @@ def rankings():
         screen.fill(C_BLACK)
         ranking_text = pygame.font.SysFont("Middle Ages Deco PERSONAL USE",35).render("RANKING",True,C_WHITE)
         ranking_rect = ranking_text.get_rect(center=(WINDOWS_WIDTH/2,WINDOWS_HEIGHT/5))
-        back_button.draw(screen)
         screen.blit(bg_ranking,bg_ranking.get_rect())
+        back_button.draw(screen)
         screen.blit(ranking_text,ranking_rect)
         ranking.print_ranking(screen)
         for event in pygame.event.get():
