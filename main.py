@@ -1,4 +1,3 @@
-import json
 import sys
 import pygame
 from constants import *
@@ -11,14 +10,8 @@ from potion import Potion
 from portal import Portal
 import time
 from boss import Boss
-
-def load_levels(level_data : str) -> list:
-    '''load the information from a json to a list
-    param: a path of an archive json
-    return: a list of pokemons'''
-    with open(level_data,"r") as file_object:
-        levels_list = json.load(file_object)["levels"]
-        return levels_list
+from ranking import Ranking
+from library_freeknight import *
 
 pygame.init()
 screen = pygame.display.set_mode((WINDOWS_WIDTH,WINDOWS_HEIGHT))
@@ -31,14 +24,92 @@ scores_button = Button(WINDOWS_WIDTH / 4 + (start_button.rect.w*2),WINDOWS_HEIGH
 credit_button = Button(WINDOWS_WIDTH / 4 + (start_button.rect.w*3),WINDOWS_HEIGHT / 2,CREDIT_BUTTON)
 back_button = Button(WINDOWS_WIDTH / 12,WINDOWS_HEIGHT / 12,BACK_BUTTON)
 next_button = Button(WINDOWS_WIDTH / 2 - (start_button.rect.w/2),WINDOWS_HEIGHT / 2,NEXT_BUTTON)
-pause_button =  Button(WINDOWS_WIDTH / 2 - (start_button.rect.w/2),WINDOWS_HEIGHT / 2,PAUSE_BUTTON)
+ok_button =  Button(WINDOWS_WIDTH / 2 - (start_button.rect.w/2),WINDOWS_HEIGHT / 2,OK_BUTTON)
 restart_button = Button(WINDOWS_WIDTH / 2 - (start_button.rect.w/2),WINDOWS_HEIGHT / 2,RESTART_BUTTON)
 mute_button = Button(WINDOWS_WIDTH / 4 + (start_button.rect.w*3),WINDOWS_HEIGHT/2,MUSIC_OFF_BUTTON)
 unmute_button = Button(WINDOWS_WIDTH / 4 + (start_button.rect.w),WINDOWS_HEIGHT/2,MUSIC_ON_BUTTON)
+ranking_button = Button(WINDOWS_WIDTH / 4 + (start_button.rect.w),WINDOWS_HEIGHT/2,MUSIC_ON_BUTTON)
 
 player = Player(move_x=0,move_y=0,position_x=1,position_y=(WINDOWS_HEIGHT)-200,direction=DIRECTION_R,speed_walk=5,speed_run=8,power_jump=100,amount_gravity=14,frame_rate_ms=60,move_rate_ms=30,p_scale=0.15)
 total_time = 5 * 60 #minutos por segundos
 start_time = time.time()
+ranking = Ranking()
+ranking.create_db()
+
+def name_player():
+    pygame.display.set_caption("Name your player")
+    while True:
+        player_name = ''
+        font = pygame.font.SysFont('Terminal',40)
+        text_box = pygame.Rect(WINDOWS_WIDTH/2 -55, WINDOWS_HEIGHT/3.1,100,50)
+        active = False
+        color = pygame.Color('purple')
+        named = False
+        while True:
+            for events in pygame.event.get():
+                if events.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                if events.type == pygame.MOUSEBUTTONDOWN:
+                    if text_box.collidepoint(events.pos):
+                        active = True
+                    else:
+                        active = False
+                if events.type == pygame.KEYDOWN:
+                    if active:
+                        if events.key == pygame.K_BACKSPACE:
+                            player_name = player_name[:-1]
+                        else:
+                            player_name += events.unicode
+                if back_button.click():
+                    main_menu()
+                elif ok_button.click():
+                    ranking.player_name = player_name
+                    named = True
+                elif start_button.click() and named:
+                    # set_up_level_1()
+                    set_up_level_final()
+
+            screen.fill(C_BLACK)
+            name_text = pygame.font.SysFont("Middle Ages Deco PERSONAL USE",35).render("Name your player",True,C_WHITE)
+            screen.blit(name_text,name_text.get_rect(center=(WINDOWS_WIDTH/2,WINDOWS_HEIGHT/5)))
+            if active:
+                color = pygame.Color(C_RED)
+            else:
+                color = pygame.Color(C_BLUE)
+
+                if start_button.click():
+                    print(player_name)
+            back_button.draw(screen)
+            start_button.draw(screen)
+            ok_button.draw(screen)
+            pygame.draw.rect(screen,color, text_box,4)
+            surf = font.render(player_name,True,C_WHITE)
+            screen.blit(surf, (WINDOWS_WIDTH/2 -50, WINDOWS_HEIGHT/3))
+            text_box.w = max(100, surf.get_width()+10)
+            pygame.display.update()
+
+def rankings():
+    pygame.display.set_caption("Ranking")
+    bg_ranking = pygame.transform.scale(pygame.image.load(RANKING),(WINDOWS_WIDTH,WINDOWS_HEIGHT))
+    while True:
+        screen.fill(C_BLACK)
+        ranking_text = pygame.font.SysFont("Middle Ages Deco PERSONAL USE",35).render("RANKING",True,C_WHITE)
+        ranking_rect = ranking_text.get_rect(center=(WINDOWS_WIDTH/2,WINDOWS_HEIGHT/5))
+        back_button.draw(screen)
+        screen.blit(bg_ranking,bg_ranking.get_rect())
+        screen.blit(ranking_text,ranking_rect)
+        ranking.insert_player(player.score)
+        ranking.print_ranking(screen)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if back_button.click():
+                    main_menu()
+
+        pygame.display.update()
 
 def credits():
     pygame.display.set_caption("Credits")
@@ -50,8 +121,8 @@ def credits():
         credits_text = pygame.font.SysFont("Middle Ages Deco PERSONAL USE",35).render("CREDITS",True,C_WHITE)
         credits_rect = credits_text.get_rect(center=(WINDOWS_WIDTH/2,WINDOWS_HEIGHT/5))
         back_button.draw(screen)
-        thanks_message = pygame.font.SysFont("Calibri",50).render("¡Gracias por jugar Free Knight!",True,C_WHITE)
-        credits_message = pygame.font.SysFont("Calibri",35).render("Creado por Lucas Damian Bracuto",True,C_WHITE)
+        thanks_message = pygame.font.SysFont("Terminal",50).render("¡Gracias por jugar Free Knight!",True,C_WHITE)
+        credits_message = pygame.font.SysFont("Terminal",35).render("Creado por Lucas Damian Bracuto",True,C_WHITE)
         screen.blit(credits_text,credits_rect)
         screen.blit(thanks_message,thanks_message.get_rect(center=(WINDOWS_WIDTH/2,WINDOWS_HEIGHT/3)))
         screen.blit(credits_message,credits_message.get_rect(center=(WINDOWS_WIDTH/2,WINDOWS_HEIGHT/2)))
@@ -202,14 +273,16 @@ def score(portal):
                 if back_button.click():
                     main_menu()
                 elif next_button.click():
-                    print(portal.level_2)
-                    print(portal.level_3)
                     if not portal.level_2 and not portal.level_3:
                         set_up_level_2()
                     elif not portal.level_3:
                         set_up_level_3()
                     elif not portal.level_final:
                         set_up_level_final()
+                    elif portal.level_final:
+                        rankings()
+                    
+                        
         pygame.display.update()
 
 def timer(total_time, start_time):
@@ -227,8 +300,8 @@ def play(run,clock,player,portal,bg_image,enemy_list,potion_list,coin_list,world
         screen.blit(bg_image,bg_image.get_rect())
         delta_ms = clock.tick(FPS)
         timer(total_time,start_time)
-        font = pygame.font.SysFont("System",35).render("SCORE: "+str(player.score),True,C_YELLOW_2)
-        life = pygame.font.SysFont("System",35).render("LIFE: "+str(player.life_bar),True,C_PINK)
+        font = pygame.font.SysFont("Terminal",35).render("SCORE: "+str(player.score),True,C_YELLOW_2)
+        life = pygame.font.SysFont("Terminal",35).render("LIFE: "+str(player.life_bar),True,C_PINK)
 
         for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -257,10 +330,9 @@ def play(run,clock,player,portal,bg_image,enemy_list,potion_list,coin_list,world
         portal.update(delta_ms,player)
         if portal.is_reached:
             score(portal)
-            player.position_x=1
 
         if player.game_complete:
-            credits()
+            rankings()
 
         #pocion
         if len(potion_list) > 0:
@@ -301,6 +373,7 @@ def settings():
         back_button.draw(screen)
         mute_button.draw(screen)
         unmute_button.draw(screen)
+        credit_button.draw(screen)
         screen.blit(settings_text,settings_rect)
 
         for event in pygame.event.get():
@@ -310,6 +383,8 @@ def settings():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.click():
                     main_menu()
+                elif credit_button.click():
+                    credits()
                 elif mute_button.click():
                     pygame.mixer.music.set_volume(0.0)
                 elif unmute_button.click():
@@ -341,7 +416,7 @@ def main_menu():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if start_button.click():
-                    set_up_level_1()
+                    name_player()
                 elif settings_button.click():
                     settings()
                 elif exit_button.click():

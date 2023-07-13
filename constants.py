@@ -19,7 +19,7 @@ BACK_BUTTON = "Juego_freeknight/mis_assets/btn/prew.png"
 NEXT_BUTTON = "Juego_freeknight/mis_assets/btn/next.png"
 SCORE_BUTTON = "Juego_freeknight/mis_assets/btn/prize.png"
 CREDIT_BUTTON = "Juego_freeknight/mis_assets/btn/about.png"
-PAUSE_BUTTON = "Juego_freeknight/mis_assets/btn/pause.png"
+OK_BUTTON = "Juego_freeknight/mis_assets/btn/ok.png"
 MUSIC_OFF_BUTTON = "Juego_freeknight/mis_assets/btn/music_off.png"
 MUSIC_ON_BUTTON = "Juego_freeknight/mis_assets/btn/music.png"
 
@@ -39,7 +39,7 @@ BG_SCORE = "Juego_freeknight\mis_assets\\background\layers\\smoke.png"
 BG_MAIN_MENU = "Juego_freeknight\mis_assets\\background\layers\\templar.png"
 BG_MAIN_MENU2 = "Juego_freeknight\mis_assets\\background\layers\\templar2.png"
 BG_MAIN_MENU3 = "Juego_freeknight\mis_assets\\background\layers\\blur.png"
-
+RANKING = "Juego_freeknight\mis_assets\\btn\Banner01.png"
 #SOUND
 MAIN_SOUND = "Juego_freeknight\mis_assets\Sounds\main_theme.mp3"
 LVL1_SOUND = "Juego_freeknight\mis_assets\Sounds\\aida.mp3"
